@@ -22,15 +22,15 @@ It is currently possible to upload files as large as 1GB.
 
 ## Installation
 
-1. Zip all files from this repository such that the install.rdf and chrome.manifest are located in the root folder of the zip file
+1. Zip all files located in the `src` folder such that the install.rdf and chrome.manifest are located in the root folder of the zip file
 1. Change the file extension from .zip to .xpi
 1. Open your Thunderbird, navigate to `Tools -> Add-Ons`, choose "Install Add-On From File..." and select the .xpi file
 1. After installation restart Thunderbird
 
 ## Nextcloud configuration
 
-1. Make sure that you have checked "Allow users to share via link" in the **"Sharing"** section of the admin page of your Nextcloud installation. If you also have checked-in the **"Enforce password protection"** option, make sure to fill **"Password for uploaded files"** field in next step
-1. By default your mail attachments will be saved in a folder called `Mail-attachments`. You currently need to create that folder
+1. Make sure that you have checked "Allow users to share via link" in the **"Sharing"** section of the admin page of your Nextcloud installation. If you have also checked-in the **"Enforce password protection"** option, make sure to fill the **"Password for uploaded files"** field when setting up the add-on in Thunderbird
+1. By default your mail attachments will be saved in a folder called `Mail-attachments`. You currently need to create that folder in the root folder of your Nextcloud prior to using the Thunderbird add-on
 
 *Note: It's also possible to use a different folder name. Simply type the name of the folder you want to use when setting up the provider in Thunderbird*
 

@@ -1,6 +1,6 @@
 # Nextcloud for Filelink
 
-![Screenshot](https://raw.githubusercontent.com/nextcloud/nextcloud-filelink/master/screenshots/configured.jpg)
+![Screenshot](https://raw.githubusercontent.com/nextcloud/nextcloud-filelink/master/screenshots/configured.png)
 
 ## Description
 
@@ -36,7 +36,7 @@ It is currently possible to upload files as large as 1GB.
 
 ## Thunderbird configuration
 
-![Screenshot](https://raw.githubusercontent.com/nextcloud/nextcloud-filelink/master/screenshots/setup.jpg)
+![Screenshot](https://raw.githubusercontent.com/nextcloud/nextcloud-filelink/master/screenshots/setup.png)
 
 1. Navigate to `Edit -> Preferences -> Attachments` 
 1. Choose the `Outgoing` tab

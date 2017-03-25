@@ -1,0 +1,37 @@
+<!--
+/**
+ * @copyright Copyright (c) 2017, Olivier Paroz (github@oparoz.com)
+ * @copyright Copyright (c) 2017, Philipp Kewisch
+ * @copyright Copyright (c) 2017, Mark James
+ * @copyright Copyright (c) 2017, Guillaume Viguier-Just (@guillaumev)
+ *
+ * @license GNU AGPL version 3 or any later version
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+-->
+		<!ENTITY nextcloudAbout.name "Nextcloud for Filelink">
+		<!ENTITY nextcloudAbout.title "About the Nextcloud for Filelink extension">
+		<!ENTITY nextcloudAbout.usp "Nextcloud: A safe home for all your data.">
+		<!ENTITY nextcloudAbout.description "Access, share and protect your files, calendars, contacts, communication and more at home and in your enterprise.">
+		<!ENTITY nextcloudAbout.likeUs "If you like this extension, you may want to consider">
+		<!ENTITY nextcloudAbout.contributing "contributing">
+		<!ENTITY nextcloudAbout.or "or">
+		<!ENTITY nextcloudAbout.purchase "buying a subscription">
+		<!ENTITY nextcloudAbout.version "Version">
+		<!ENTITY nextcloudAbout.createdBy "Created by">
+		<!ENTITY nextcloudAbout.closeButton "Close">
+		<!ENTITY nextcloudAbout.license "License">
+		<!ENTITY nextcloudAbout.licenseDescription "Licensed under the GNU AGPL version 3 or any later version">

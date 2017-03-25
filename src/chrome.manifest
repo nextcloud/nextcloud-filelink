@@ -1,0 +1,9 @@
+content     nextcloud    chrome/content/
+locale nextcloud en chrome/locale/en/
+locale nextcloud fr chrome/locale/fr/
+locale nextcloud pl chrome/locale/pl/
+locale nextcloud de chrome/locale/de/
+locale nextcloud nl chrome/locale/nl/
+component {ad8c3b77-7dc8-41d1-8985-5be88b254ff3} components/nsNextcloud.js
+contract @mozilla.org/mail/nextcloud;1 {ad8c3b77-7dc8-41d1-8985-5be88b254ff3}
+category cloud-files Nextcloud @mozilla.org/mail/nextcloud;1

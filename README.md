@@ -1,10 +1,10 @@
 # Nextcloud for Filelink
 
-![Screenshot](https://raw.githubusercontent.com/nextcloud/nextcloud-filelink/master/build/screenshots/configured.jpg)
+![Screenshot](https://raw.githubusercontent.com/nextcloud/nextcloud-filelink/master/screenshots/configured.jpg)
 
 ## Description
 
-[Nextcloud](https://nextcloud.com) is a popular, Enterprise-ready, Open Source File Sync and Share solution
+[Nextcloud](https://nextcloud.com) is the premiere and safest, Enterprise-ready, Open Source File Sync and Share solution
 
 ["Nextcloud for Filelink"](https://github.com/nextcloud/nextcloud-filelink) is a Thunderbird extension which makes it easy to send large attachments with Thunderbird by uploading them first to a Nextcloud server and by then inserting the link into the body of your email.
 
@@ -36,7 +36,7 @@ It is currently possible to upload files as large as 1GB.
 
 ## Thunderbird configuration
 
-![Screenshot](https://raw.githubusercontent.com/nextcloud/nextcloud-filelink/master/build/screenshots/setup.jpg)
+![Screenshot](https://raw.githubusercontent.com/nextcloud/nextcloud-filelink/master/screenshots/setup.jpg)
 
 1. Navigate to `Edit -> Preferences -> Attachments` 
 1. Choose the `Outgoing` tab

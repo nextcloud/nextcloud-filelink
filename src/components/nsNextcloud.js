@@ -37,7 +37,7 @@ Cu.import("resource:///modules/gloda/log4moz.js");
 Cu.import("resource:///modules/cloudFileAccounts.js");
 
 const kRestBase = "/ocs/v1.php";
-const kAuthPath = kRestBase + "/person/check";
+const kAuthPath = kRestBase + "/cloud/user";
 const kShareApp = kRestBase + "/apps/files_sharing/api/v1/shares";
 const kMaxFileSize = 1073741824;
 const kWebDavPath = "/remote.php/webdav";
@@ -190,7 +190,7 @@ Nextcloud.prototype = {
 		if (!this._loggedIn) {
 			return this._logonAndGetUserInfo(successCallback, null, true);
 		}
-		
+
 		this.log.info("getting user info");
 
 		if (!this._userInfo) {
@@ -398,16 +398,14 @@ Nextcloud.prototype = {
 
 		this.log.info("Sending login information...");
 
-		let username = "login=" + wwwFormUrlEncode(this._userName);
-		let password = "&password=" + wwwFormUrlEncode(this._password);
-		let loginData = username + password;
 		let args = "?format=json";
 		let req = Cc["@mozilla.org/xmlextras/xmlhttprequest;1"]
 			.createInstance(Ci.nsIXMLHttpRequest);
 
-		req.open("POST", this._serverUrl + ":" + this._serverPort + kAuthPath + args, true);
+		req.open("GET", this._serverUrl + ":" + this._serverPort + kAuthPath + args, true);
 		req.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 		req.setRequestHeader("OCS-APIREQUEST", "true");
+		req.setRequestHeader("Authorization", "Basic " + btoa(this._userName + ':' + this._password));
 
 		req.onerror = function () {
 			this.log.info("logon failure");
@@ -447,7 +445,7 @@ Nextcloud.prototype = {
 			}
 		}.bind(this);
 
-		req.send(loginData);
+		req.send();
 		this.log.info("Login information sent!");
 	},
 

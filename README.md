@@ -12,13 +12,13 @@ It is currently possible to upload files as large as 1GB.
 
 ## Maintainers
 
+* Guillaume Viguier-Just (@guillaumev)
 * Olivier Paroz (@oparoz)
 
 ### Alumni
 
 * Philipp Kewisch
 * Mark James
-* Guillaume Viguier-Just (@guillaumev)
 
 ## Installation
 

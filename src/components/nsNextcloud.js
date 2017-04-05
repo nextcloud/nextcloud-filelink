@@ -39,7 +39,6 @@ Cu.import("resource:///modules/cloudFileAccounts.js");
 const kRestBase = "/ocs/v1.php";
 const kAuthPath = kRestBase + "/cloud/user";
 const kShareApp = kRestBase + "/apps/files_sharing/api/v1/shares";
-const kMaxFileSize = 1073741824;
 const kWebDavPath = "/remote.php/webdav";
 
 function wwwFormUrlEncode (aStr) {
@@ -122,7 +121,7 @@ Nextcloud.prototype = {
 	_uploader: null,
 	_lastErrorStatus: 0,
 	_lastErrorText: "",
-	_maxFileSize: kMaxFileSize,
+	_maxFileSize: -1,
 	_totalStorage: -1,
 	_fileSpaceUsed: -1,
 	_uploads: [],
@@ -490,11 +489,7 @@ Nextcloud.prototype = {
 	 * @private
 	 */
 	_finishUpload: function nsNc__finishUpload (aFile, aCallback) {
-		let exceedsFileLimit = Ci.nsIMsgCloudFileProvider.uploadExceedsFileLimit;
 		let exceedsQuota = Ci.nsIMsgCloudFileProvider.uploadWouldExceedQuota;
-		if (aFile.fileSize > this._maxFileSize) {
-			return aCallback.onStopRequest(null, null, exceedsFileLimit);
-		}
 		if ((this._totalStorage > 0) && (aFile.fileSize > this.remainingFileSpace)) {
 			return aCallback.onStopRequest(null, null, exceedsQuota);
 		}

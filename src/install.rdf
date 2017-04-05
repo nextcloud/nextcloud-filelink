@@ -24,6 +24,14 @@
         <em:maxVersion>55.*</em:maxVersion>
       </Description>
     </em:targetApplication>
-   
-  </Description>      
+
+    <em:localized>
+      <Description>
+        <em:locale>es</em:locale>
+        <em:name>Soporte de Nextcloud para Filelink</em:name>
+        <em:description>Añade soporte de Nextcloud para la característica Filelink en Thunderbird.</em:description>
+      </Description>
+    </em:localized>
+
+  </Description>
 </RDF>

@@ -4,9 +4,9 @@
      xmlns:em="http://www.mozilla.org/2004/em-rdf#">
 
   <Description about="urn:mozilla:install-manifest">
-    <em:id>nextcloud-filelink@oparoz.com</em:id>
+    <em:id>filelink@nextcloud.com</em:id>
     <em:name>Nextcloud for Filelink</em:name>
-    <em:version>1.0</em:version>
+    <em:version>1.5</em:version>
     <em:type>2</em:type>
     <em:creator>Olivier Paroz</em:creator>
     <em:contributor>Philipp Kewisch</em:contributor>

@@ -306,7 +306,7 @@ Nextcloud.prototype = {
 		return this._maxFileSize;
 	},
 	get remainingFileSpace () {
-		return this._totalStorage - this._fileSpaceUsed;
+		return this._totalStorage > 0 : this._totalStorage - this._fileSpaceUsed : -1;
 	},
 	get fileSpaceUsed () {
 		return this._fileSpaceUsed;

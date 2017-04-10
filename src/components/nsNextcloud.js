@@ -272,14 +272,14 @@ Nextcloud.prototype = {
 		// XXX: replace this with a better function
 		let successCb = function () {
 			let folderExists = function (exists) {
-        if (exists) {
-          aRequestObserver.onStopRequest(null, this, Cr.NS_OK);
-        }
-        else {
-          aRequestObserver.onStopRequest(null, this, Ci.nsIMsgCloudFileProvider.authErr);
-        }
-      }.bind(this);
-      this._checkFolderExists(folderExists);
+				if (exists) {
+					aRequestObserver.onStopRequest(null, this, Cr.NS_OK);
+				}
+				else {
+					aRequestObserver.onStopRequest(null, this, Ci.nsIMsgCloudFileProvider.authErr);
+				}
+			}.bind(this);
+			this._checkFolderExists(folderExists);
 		}.bind(this);
 
 		let failureCb = function () {
@@ -306,7 +306,7 @@ Nextcloud.prototype = {
 		return this._maxFileSize;
 	},
 	get remainingFileSpace () {
-		return this._totalStorage > 0 : this._totalStorage - this._fileSpaceUsed : -1;
+		return this._totalStorage > 0 ? this._totalStorage - this._fileSpaceUsed : -1;
 	},
 	get fileSpaceUsed () {
 		return this._fileSpaceUsed;
@@ -413,7 +413,8 @@ Nextcloud.prototype = {
 		req.open("GET", this._serverUrl + ":" + this._serverPort + kAuthPath + args, true);
 		req.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 		req.setRequestHeader("OCS-APIREQUEST", "true");
-		req.setRequestHeader("Authorization", "Basic " + btoa(this._userName + ':' + this._password));
+		req.setRequestHeader("Authorization",
+			"Basic " + btoa(this._userName + ':' + this._password));
 
 		req.onerror = function () {
 			this.log.info("logon failure");
@@ -496,7 +497,7 @@ Nextcloud.prototype = {
 	 *                  ending states of the upload.
 	 * @private
 	 */
-	_finishUpload: function nsNc__finishUpload (aFile, aCallback) {
+	_finishUpload: function nsNc_finishUpload (aFile, aCallback) {
 		let exceedsQuota = Ci.nsIMsgCloudFileProvider.uploadWouldExceedQuota;
 		if ((this._totalStorage > 0) && (aFile.fileSize > this.remainingFileSpace)) {
 			return aCallback.onStopRequest(null, null, exceedsQuota);
@@ -523,7 +524,7 @@ Nextcloud.prototype = {
 	 * @param failureCallback the function called if information retrieval fails
 	 * @private
 	 */
-	_getUserInfo: function nsNc__getUserInfo (successCallback, failureCallback) {
+	_getUserInfo: function nsNc_getUserInfo (successCallback, failureCallback) {
 		if (!successCallback) {
 			successCallback = function () {
 				this.requestObserver
@@ -589,49 +590,52 @@ Nextcloud.prototype = {
 	 * @returns {NodeList|number}
 	 * @private
 	 */
-	_getQuota: function nsNc__getUserQuota (req, davVariable) {
+	_getQuota: function nsNc_getUserQuota (req, davVariable) {
 		let quota = req.documentElement.getElementsByTagNameNS("DAV:", davVariable);
 		return quota && quota.length && Number(quota[0].textContent) || -1;
 	},
 
 	/**
-   * A private function that checks that the folder entered in the
-   * settings screen exists on the server.
-   *
-   * @param callback callback function called with true or false as an argument
-   */
-  _checkFolderExists: function nsOwncloud_checkFolderExists(callback) {
-    if (this._storageFolder !== '/') {
-      let body = '<propfind xmlns="DAV:">' +
-        '<prop>' +
-          '<resourcetype />' +
-        '</prop>' +
-      '</propfind>';
+	 * A private function which makes sure that the folder entered in the
+	 * settings screen exists on the server.
+	 *
+	 * @param callback callback function called with true or false as an argument
+	 * @private
+	 */
+	_checkFolderExists: function nsNc_checkFolderExists (callback) {
+		if (this._storageFolder !== '/') {
+			let body = '<propfind xmlns="DAV:">' +
+				'<prop>' +
+				'<resourcetype />' +
+				'</prop>' +
+				'</propfind>';
 
-      let req = Cc["@mozilla.org/xmlextras/xmlhttprequest;1"]
-                  .createInstance(Ci.nsIXMLHttpRequest);
+			let req = Cc["@mozilla.org/xmlextras/xmlhttprequest;1"]
+				.createInstance(Ci.nsIXMLHttpRequest);
 
-      req.open("PROPFIND", this._serverUrl + kWebDavPath + ("/" + this._storageFolder + "/").replace(/\/+/g,'/'), true, this._userName, this._password);
-      req.onerror = function() {
-        this.log.info("failure checking folder");
-        callback(false);
-      }.bind(this);
+			req.open("PROPFIND", this._serverUrl + kWebDavPath +
+				("/" + this._storageFolder + "/").replace(/\/+/g, '/'), true, this._userName,
+				this._password);
+			req.onerror = function () {
+				this.log.info("Failed to check if folder exists");
+				callback(false);
+			}.bind(this);
 
-      req.onload = function() {
-        if (req.status === 207) {
-          return callback(true);
-        }
-        else {
-          return callback(false);
-        }
-      }.bind(this);
+			req.onload = function () {
+				if (req.status === 207) {
+					return callback(true);
+				}
+				else {
+					return callback(false);
+				}
+			}.bind(this);
 
-      req.send(body);
-    }
-    else {
-      return callback(true);
-    }
-  },
+			req.send(body);
+		}
+		else {
+			return callback(true);
+		}
+	},
 
 	/**
 	 * A private function that first ensures that the user is logged in, and then

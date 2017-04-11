@@ -56,8 +56,6 @@ Once setup is complete, Thunderbird will always ask you if you want to upload bi
 ## Known issues
 
 * It's not possible to use the same Filelink provider more than once
-* You need to create the folder in Nextcloud yourself
-* Stats will be wrong if the account's storage space is unlimited
 * You can only create public links
 * Public links will always have the same password
 * You cannot edit your Filelink account. You have to delete and re-create it if you need a change (password, folder, link password, port, etc.)

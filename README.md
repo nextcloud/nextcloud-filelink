@@ -60,6 +60,8 @@ Once setup is complete, Thunderbird will always ask you if you want to upload bi
 * Public links will always have the same password
 * You cannot edit your Filelink account. You have to delete and re-create it if you need a change (password, folder, link password, port, etc.)
 
+Best ask for help [on our forums.](https://help.nextcloud.com/c/apps/filelink)
+
 ## License
 
 Licensed under the GNU AGPL version 3 or any later version

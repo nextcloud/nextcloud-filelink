@@ -24,14 +24,14 @@
 -->
 		<!ENTITY nextcloudAbout.name "Nextcloud pour Filelink">
 		<!ENTITY nextcloudAbout.title "A propos de l'extension Nextcloud pour Filelink">
-		<!ENTITY nextcloudAbout.usp "Nextcloud: A safe home for all your data.">
-		<!ENTITY nextcloudAbout.description "Access, share and protect your files, calendars, contacts, communication and more at home and in your enterprise.">
-		<!ENTITY nextcloudAbout.likeUs "If you like this extension, you may want to consider">
-		<!ENTITY nextcloudAbout.contributing "contributing">
-		<!ENTITY nextcloudAbout.or "or">
-		<!ENTITY nextcloudAbout.purchase "buying a subscription">
+		<!ENTITY nextcloudAbout.usp "Nextcloud : un endroit sûr pour toutes vos données.">
+		<!ENTITY nextcloudAbout.description "Accédez, partagez et protégez vos fichiers, calendriers, contacts, communication et plus à la maison et dans votre entreprise.">
+		<!ENTITY nextcloudAbout.likeUs "Si vous aimez cette extension, vous pouvez">
+		<!ENTITY nextcloudAbout.contributing "contribuer">
+		<!ENTITY nextcloudAbout.or "ou">
+		<!ENTITY nextcloudAbout.purchase "souscrire à un abonnement">
 		<!ENTITY nextcloudAbout.version "Version">
 		<!ENTITY nextcloudAbout.createdBy "Créé par">
 		<!ENTITY nextcloudAbout.closeButton "Fermer">
 		<!ENTITY nextcloudAbout.license "License">
-		<!ENTITY nextcloudAbout.licenseDescription "Licensed under the GNU AGPL version 3 or any later version">
+		<!ENTITY nextcloudAbout.licenseDescription "License sous GNU AGPL version 3 ou toute version ultérieure">

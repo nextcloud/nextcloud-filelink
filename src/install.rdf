@@ -33,5 +33,13 @@
       </Description>
     </em:localized>
 
+    <em:localized>
+      <Description>
+        <em:locale>fr</em:locale>
+        <em:name>Nextcloud pour Filelink</em:name>
+        <em:description>Ajout du support de Nextcloud pour la fonction Filelink de Thunderbird</em:description>
+      </Description>
+    </em:localized>
+
   </Description>
 </RDF>

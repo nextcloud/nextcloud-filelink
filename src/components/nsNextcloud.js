@@ -271,12 +271,22 @@ Nextcloud.prototype = {
 	createExistingAccount: function nsNc_createExistingAccount (aRequestObserver) {
 		// XXX: replace this with a better function
 		let successCb = function () {
+
+			let callbackCreateFolder = function (created) {
+				if (created) {
+					aRequestObserver.onStopRequest(null, this, Cr.NS_OK);
+				}
+				else {
+					aRequestObserver.onStopRequest(null, this, Ci.nsIMsgCloudFileProvider.authErr);
+				}
+			}.bind(this);
+
 			let folderExists = function (exists) {
 				if (exists) {
 					aRequestObserver.onStopRequest(null, this, Cr.NS_OK);
 				}
 				else {
-					aRequestObserver.onStopRequest(null, this, Ci.nsIMsgCloudFileProvider.authErr);
+					this._createFolder(callbackCreateFolder);
 				}
 			}.bind(this);
 			this._checkFolderExists(folderExists);
@@ -635,6 +645,38 @@ Nextcloud.prototype = {
 		else {
 			return callback(true);
 		}
+	},
+
+	/**
+	 * A private function which creates a folder entered
+	 * in the settings screen on the server.
+	 *
+	 * @param callback callback function called with true or false as an argument
+	 * @private
+	 */
+	_createFolder: function createFolder(callback) {
+		if (this._storageFolder !== '/') {
+			let req = Cc["@mozilla.org/xmlextras/xmlhttprequest;1"]
+				.createInstance(Ci.nsIXMLHttpRequest);
+
+			req.open("MKCOL", this._serverUrl + kWebDavPath +
+				("/" + this._storageFolder + "/").replace(/\/+/g, '/'), true, this._userName,
+				this._password);
+
+			req.onload = function () {
+				if (req.status === 201) {
+					return callback(true);
+				}
+				else {
+					return callback(false);
+				}
+			}.bind(this);
+			req.send();
+		}
+		else {
+			return callback(false);
+		}
+
 	},
 
 	/**

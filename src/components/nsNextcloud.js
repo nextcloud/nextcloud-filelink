@@ -842,6 +842,8 @@ NextcloudFileUploader.prototype = {
 		req.setRequestHeader('Content-Type', "application/x-www-form-urlencoded");
 		req.setRequestHeader("Content-Length", String(formData.length));
 		req.setRequestHeader("OCS-APIREQUEST", "true");
+		req.setRequestHeader("Authorization",
+			"Basic " + btoa(this.nextcloud._userName + ':' + this.nextcloud._password));
 
 		req.onload = function () {
 

@@ -59,7 +59,7 @@ function validURL(value) {
  * Our Nextcloud Provider
  */
 function Nextcloud () {
-	// this.log = Log4Moz.getConfiguredLogger("Nextcloud", Log4Moz.Level.Info, Log4Moz.Level.Debug,
+	//this.log = Log4Moz.getConfiguredLogger("Nextcloud", Log4Moz.Level.Info, Log4Moz.Level.Debug,
 	//  Log4Moz.Level.Debug);
 	this.log = Log4Moz.getConfiguredLogger("Nextcloud");
 }
@@ -108,6 +108,7 @@ Nextcloud.prototype = {
 	_accountKey: false,
 	_serverUrl: "",
 	_serverPort: 443,
+	_fullUrl: "",
 	_storageFolder: "",
 	_userName: "",
 	_password: "",
@@ -150,6 +151,12 @@ Nextcloud.prototype = {
 		this._serverUrl = this._prefBranch.getCharPref("server");
 		this._serverPort = this._prefBranch.getIntPref("port");
 		this._userName = this._prefBranch.getCharPref("username");
+		let fullUrl = this._serverUrl + ":" + this._serverPort;
+		const thirdSlash = this._serverUrl.indexOf('/', 9);
+		if (thirdSlash !== -1) {
+			fullUrl = this._serverUrl.slice(0, thirdSlash) + ":" + this._serverPort + this._serverUrl.slice(thirdSlash);
+		}
+		this._fullUrl = fullUrl;
 
 		if (this._prefBranch.prefHasUserValue("storageFolder")) {
 			this._storageFolder = this._prefBranch.getCharPref("storageFolder");
@@ -353,7 +360,7 @@ Nextcloud.prototype = {
 			this.log.info("Suppressing password prompt");
 		}
 
-		let passwordURI = this._serverUrl;
+		let passwordURI = this._fullUrl;
 		let logins = Services.logins.findLogins({}, passwordURI, null, passwordURI);
 		for (let loginInfo of logins) {
 			if (loginInfo.username == aUsername) {
@@ -370,10 +377,10 @@ Nextcloud.prototype = {
 		let authPrompter = Services.ww.getNewAuthPrompter(win);
 		let password = {value: ""};
 		// Use the service name in the prompt text
-		let userPos = this._serverUrl.indexOf("//") + 2;
+		let userPos = this._fullUrl.indexOf("//") + 2;
 		let userNamePart = encodeURIComponent(this._userName) + '@';
 		let serverUrl =
-			this._serverUrl.substr(0, userPos) + userNamePart + this._serverUrl.substr(userPos);
+			this._fullUrl.substr(0, userPos) + userNamePart + this._fullUrl.substr(userPos);
 		let messengerBundle = Services.strings.createBundle(
 			"chrome://messenger/locale/messenger.properties");
 		let promptString = messengerBundle.formatStringFromName("passwordPrompt",
@@ -431,7 +438,7 @@ Nextcloud.prototype = {
 		let req = Cc["@mozilla.org/xmlextras/xmlhttprequest;1"]
 			.createInstance(Ci.nsIXMLHttpRequest);
 
-		req.open("GET", this._serverUrl + ":" + this._serverPort + kAuthPath + args, true);
+		req.open("GET", this._fullUrl + kAuthPath + args, true);
 		req.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 		req.setRequestHeader("OCS-APIREQUEST", "true");
 		req.setRequestHeader("Authorization",
@@ -571,7 +578,7 @@ Nextcloud.prototype = {
 		let req = Cc["@mozilla.org/xmlextras/xmlhttprequest;1"].createInstance(
 			Ci.nsIXMLHttpRequest);
 
-		req.open("PROPFIND", this._serverUrl + ":" + this._serverPort + kWebDavPath, true,
+		req.open("PROPFIND", this._fullUrl + kWebDavPath, true,
 			this._userName, this._password);
 		req.onerror = function () {
 			this.log.info("logon failure");
@@ -634,7 +641,7 @@ Nextcloud.prototype = {
 			let req = Cc["@mozilla.org/xmlextras/xmlhttprequest;1"]
 				.createInstance(Ci.nsIXMLHttpRequest);
 
-			req.open("PROPFIND", this._serverUrl + kWebDavPath +
+			req.open("PROPFIND", this._fullUrl + kWebDavPath +
 				("/" + this._storageFolder + "/").replace(/\/+/g, '/'), true, this._userName,
 				this._password);
 			req.onerror = function () {
@@ -670,7 +677,7 @@ Nextcloud.prototype = {
 			let req = Cc["@mozilla.org/xmlextras/xmlhttprequest;1"]
 				.createInstance(Ci.nsIXMLHttpRequest);
 
-			req.open("MKCOL", this._serverUrl + kWebDavPath +
+			req.open("MKCOL", this._fullUrl + kWebDavPath +
 				("/" + this._storageFolder + "/").replace(/\/+/g, '/'), true, this._userName,
 				this._password);
 
@@ -754,9 +761,7 @@ NextcloudFileUploader.prototype = {
 
 		let folder = ("/" + this.nextcloud._storageFolder + "/").replace(/\/+/g, '/');
 
-		let url = this.nextcloud._serverUrl +
-			":" +
-			this.nextcloud._serverPort +
+		let url = this.nextcloud._fullUrl +
 			kWebDavPath +
 			folder +
 			this._fileUploadTS[this.file.path] +
@@ -827,7 +832,6 @@ NextcloudFileUploader.prototype = {
 	 * @private
 	 */
 	_getShareUrl: function nsNCFU_getShareUrl (aFile, aCallback) {
-		//let url = this.nextcloud._serverUrl + ":" + this.nextcloud._serverPort + kWebDavPath;
 		this.file = aFile;
 		let shareType = 3;
 		let args = "?format=json";
@@ -844,7 +848,7 @@ NextcloudFileUploader.prototype = {
 		}
 
 		req.open("POST",
-			this.nextcloud._serverUrl + ":" + this.nextcloud._serverPort + kShareApp + args,
+			this.nextcloud._fullUrl + kShareApp + args,
 			true,
 			this.nextcloud._userName,
 			this.nextcloud._password

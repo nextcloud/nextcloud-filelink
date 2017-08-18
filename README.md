@@ -6,7 +6,7 @@
 
 [Nextcloud](https://nextcloud.com) is the premiere and safest, Enterprise-ready, Open Source File Sync and Share solution
 
-["Nextcloud for Filelink"](https://github.com/nextcloud/nextcloud-filelink) is a Thunderbird extension which makes it easy to send large attachments with Thunderbird by uploading them first to a Nextcloud server and by then inserting the link into the body of your email.
+["Nextcloud for Filelink"](https://addons.mozilla.org/thunderbird/addon/nextcloud-filelink/) is a Thunderbird extension which makes it easy to send large attachments with Thunderbird by uploading them first to a Nextcloud server and by then inserting the link into the body of your email.
 
 It is currently possible to upload files as large as 1GB.
 

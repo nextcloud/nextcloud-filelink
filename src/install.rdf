@@ -6,7 +6,7 @@
   <Description about="urn:mozilla:install-manifest">
     <em:id>owncloud@viguierjust.com</em:id>
     <em:name>Nextcloud for Filelink</em:name>
-    <em:version>1.7.1</em:version>
+    <em:version>1.8</em:version>
     <em:type>2</em:type>
     <em:creator>Olivier Paroz</em:creator>
     <em:contributor>Philipp Kewisch</em:contributor>

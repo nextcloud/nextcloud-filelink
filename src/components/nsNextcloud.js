@@ -35,6 +35,7 @@ Cu.import("resource:///modules/oauth.jsm");
 Cu.import("resource://gre/modules/Services.jsm");
 Cu.import("resource:///modules/gloda/log4moz.js");
 Cu.import("resource:///modules/cloudFileAccounts.js");
+Cu.importGlobalProperties(["XMLHttpRequest"]);
 
 const kRestBase = "/ocs/v1.php";
 const kAuthPath = kRestBase + "/cloud/user";
@@ -435,8 +436,7 @@ Nextcloud.prototype = {
 		this.log.info("Sending login information...");
 
 		let args = "?format=json";
-		let req = Cc["@mozilla.org/xmlextras/xmlhttprequest;1"]
-			.createInstance(Ci.nsIXMLHttpRequest);
+		let req = new XMLHttpRequest(Ci.nsIXMLHttpRequest);
 
 		req.open("GET", this._fullUrl + kAuthPath + args, true);
 		req.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
@@ -575,8 +575,7 @@ Nextcloud.prototype = {
 			'</prop>' +
 			'</propfind>';
 
-		let req = Cc["@mozilla.org/xmlextras/xmlhttprequest;1"].createInstance(
-			Ci.nsIXMLHttpRequest);
+		let req = new XMLHttpRequest(Ci.nsIXMLHttpRequest);
 
 		req.open("PROPFIND", this._fullUrl + kWebDavPath, true,
 			this._userName, this._password);
@@ -638,8 +637,7 @@ Nextcloud.prototype = {
 				'</prop>' +
 				'</propfind>';
 
-			let req = Cc["@mozilla.org/xmlextras/xmlhttprequest;1"]
-				.createInstance(Ci.nsIXMLHttpRequest);
+			let req = new XMLHttpRequest(Ci.nsIXMLHttpRequest);
 
 			req.open("PROPFIND", this._fullUrl + kWebDavPath +
 				("/" + this._storageFolder + "/").replace(/\/+/g, '/'), true, this._userName,
@@ -674,8 +672,7 @@ Nextcloud.prototype = {
 	 */
 	_createFolder: function createFolder(callback) {
 		if (this._storageFolder !== '/') {
-			let req = Cc["@mozilla.org/xmlextras/xmlhttprequest;1"]
-				.createInstance(Ci.nsIXMLHttpRequest);
+			let req = new XMLHttpRequest(Ci.nsIXMLHttpRequest);
 
 			req.open("MKCOL", this._fullUrl + kWebDavPath +
 				("/" + this._storageFolder + "/").replace(/\/+/g, '/'), true, this._userName,
@@ -778,8 +775,7 @@ NextcloudFileUploader.prototype = {
 		bufStream = bufStream.QueryInterface(Ci.nsIInputStream);
 		let contentLength = fstream.available();
 
-		let req = Cc["@mozilla.org/xmlextras/xmlhttprequest;1"].createInstance(
-			Ci.nsIXMLHttpRequest);
+		let req = new XMLHttpRequest(Ci.nsIXMLHttpRequest);
 
 		req.open("PUT", url, true, this._userName, this._password);
 
@@ -835,8 +831,7 @@ NextcloudFileUploader.prototype = {
 		this.file = aFile;
 		let shareType = 3;
 		let args = "?format=json";
-		let req = Cc["@mozilla.org/xmlextras/xmlhttprequest;1"]
-			.createInstance(Ci.nsIXMLHttpRequest);
+		let req = new XMLHttpRequest(Ci.nsIXMLHttpRequest);
 		let path = wwwFormUrlEncode(
 			("/" + this.nextcloud._storageFolder + "/").replace(/\/+/g, '/') +
 			this._fileUploadTS[this.file.path] + "_" + this.file.leafName);

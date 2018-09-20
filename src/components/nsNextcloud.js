@@ -572,58 +572,64 @@ Nextcloud.prototype = {
 			}.bind(this);
 		}
 
-		let body = '<propfind xmlns="DAV:">' +
-			'<prop>' +
-			'<quota-available-bytes/>' +
-			'<quota-used-bytes/>' +
-			'</prop>' +
-			'</propfind>';
 
+		let args = "?format=json";
 		let req = new XMLHttpRequest(Ci.nsIXMLHttpRequest);
 
-		req.open("PROPFIND", this._fullUrl + kWebDavPath, true,
-			this._userName, this._password);
+		req.open("GET", this._fullUrl + kAuthPath + args, true);
+		req.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+		req.setRequestHeader("OCS-APIREQUEST", "true");
+		req.setRequestHeader("Authorization",
+			"Basic " + btoa(this._userName + ':' + this._password));
+
 		req.onerror = function () {
-			this.log.error("logon failure");
+			this.log.info("logon failure");
 			failureCallback();
 		}.bind(this);
 
 		req.onload = function () {
 			if (req.status >= 200 && req.status < 400) {
-				this._fileSpaceUsed = this._getQuota(req.responseXML, "quota-used-bytes");
-				if (this._fileSpaceUsed < 0) {
-					this._fileSpaceUsed = -1;
-				}
+				try {
+					this.log.info("auth token response = " + req.responseText);
 
-				let spaceAvailable = this._getQuota(req.responseXML, "quota-available-bytes");
+					let docResponse = JSON.parse(req.responseText);
 
-				if (spaceAvailable && spaceAvailable > -1) { // positive numbers
-					this._totalStorage = spaceAvailable + this._fileSpaceUsed;
-				} else if (!spaceAvailable && spaceAvailable !== 0) { // 0 and unequal 0
-					this._totalStorage = -1;
-				} else if (!spaceAvailable || spaceAvailable < 0) { // 0 or negative
-					this._totalStorage = 0;
+					let statuscode = docResponse.ocs.meta.statuscode;
+
+					this.log.info("statuscode = " + statuscode);
+
+					if (statuscode == 100) {
+						this._fileSpaceUsed = docResponse.ocs.data.quota.used;
+						if (this._fileSpaceUsed < 0) {
+							this._fileSpaceUsed = -1;
+						}
+
+						let spaceAvailable = docResponse.ocs.data.quota.free;
+
+						if (spaceAvailable && spaceAvailable > -1) { // positive numbers
+							this._totalStorage = spaceAvailable + this._fileSpaceUsed;
+						} else if (!spaceAvailable && spaceAvailable !== 0) { // 0 and unequal 0
+							this._totalStorage = -1;
+						} else if (!spaceAvailable || spaceAvailable < 0) { // 0 or negative
+							this._totalStorage = 0;
+						}
+						console.log(this._fileSpaceUsed, "$", this._totalStorage)
+						successCallback();
+					} else {
+						failureCallback();
+					}
+				} catch (e) {
+					this.log.error(e);
+					this._loggedIn = false;
+					failureCallback();
 				}
-				successCallback();
-			} else {
+			}
+			else {
 				failureCallback();
 			}
 		}.bind(this);
 
-		req.send(body);
-	},
-
-	/**
-	 * Retrieves quota information from a WebDAV response
-	 *
-	 * @param req
-	 * @param davVariable
-	 * @returns {NodeList|number}
-	 * @private
-	 */
-	_getQuota: function nsNc_getUserQuota (req, davVariable) {
-		let quota = req.documentElement.getElementsByTagNameNS("DAV:", davVariable);
-		return quota && quota.length && Number(quota[0].textContent) || -1;
+		req.send();
 	},
 
 	/**
@@ -781,7 +787,16 @@ NextcloudFileUploader.prototype = {
 
 		let req = new XMLHttpRequest(Ci.nsIXMLHttpRequest);
 
-		req.open("PUT", url, true, this._userName, this._password);
+
+		let password = this.nextcloud.getPassword(this.nextcloud._userName, false);
+
+		if (password === "") {
+			this.log.error("Could not upload file. Password is not set");
+			return;
+		}
+
+
+		req.open("PUT", url, true, this.nextcloud._userName, password);
 
 		req.onerror = function () {
 			this.log.error("Could not upload file");

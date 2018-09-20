@@ -642,11 +642,14 @@ Nextcloud.prototype = {
 				'</prop>' +
 				'</propfind>';
 
-			let req = new XMLHttpRequest(Ci.nsIXMLHttpRequest);
+			let req = new XMLHttpRequest(Object.assign({mozAnon: true}, Ci.nsIXMLHttpRequest));
 
 			req.open("PROPFIND", this._fullUrl + kWebDavPath +
-				("/" + this._storageFolder + "/").replace(/\/+/g, '/'), true, this._userName,
-				this._password);
+				("/" + this._storageFolder + "/").replace(/\/+/g, '/'), true);
+
+			req.setRequestHeader("Authorization",
+				"Basic " + btoa(this._userName + ':' + this._password));
+
 			req.onerror = function () {
 				this.log.info("Failed to check if folder exists");
 				callback(false);
@@ -677,11 +680,13 @@ Nextcloud.prototype = {
 	 */
 	_createFolder: function createFolder(callback) {
 		if (this._storageFolder !== '/') {
-			let req = new XMLHttpRequest(Ci.nsIXMLHttpRequest);
+			let req = new XMLHttpRequest(Object.assign({mozAnon: true}, Ci.nsIXMLHttpRequest));
 
 			req.open("MKCOL", this._fullUrl + kWebDavPath +
-				("/" + this._storageFolder + "/").replace(/\/+/g, '/'), true, this._userName,
-				this._password);
+				("/" + this._storageFolder + "/").replace(/\/+/g, '/'), true);
+
+			req.setRequestHeader("Authorization",
+				"Basic " + btoa(this._userName + ':' + this._password));
 
 			req.onload = function () {
 				if (req.status === 201) {
@@ -780,9 +785,6 @@ NextcloudFileUploader.prototype = {
 		bufStream = bufStream.QueryInterface(Ci.nsIInputStream);
 		let contentLength = fstream.available();
 
-		let req = new XMLHttpRequest(Ci.nsIXMLHttpRequest);
-
-
 		let password = this.nextcloud.getPassword(this.nextcloud._userName, false);
 
 		if (password === "") {
@@ -790,8 +792,12 @@ NextcloudFileUploader.prototype = {
 			return;
 		}
 
+		let req = new XMLHttpRequest(Object.assign({mozAnon: true}, Ci.nsIXMLHttpRequest));
 
-		req.open("PUT", url, true, this.nextcloud._userName, password);
+		req.open("PUT", url, true);
+
+		req.setRequestHeader("Authorization",
+			"Basic " + btoa(this.nextcloud._userName + ':' + password));
 
 		req.onerror = function () {
 			this.log.error("Could not upload file");

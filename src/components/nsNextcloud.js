@@ -608,7 +608,6 @@ Nextcloud.prototype = {
 						} else if (!spaceAvailable || spaceAvailable < 0) { // 0 or negative
 							this._totalStorage = 0;
 						}
-						console.log(this._fileSpaceUsed, "$", this._totalStorage)
 						successCallback();
 					} else {
 						failureCallback();
@@ -819,7 +818,11 @@ NextcloudFileUploader.prototype = {
 		}.bind(this);
 
 		req.setRequestHeader("Content-Length", contentLength);
-		req.sendInputStream(bufStream);
+		if (req.sendInputStream) { // Fix for old TB
+			req.sendInputStream(bufStream);
+		} else {
+			req.send(bufStream);
+		}
 	},
 
 	/**

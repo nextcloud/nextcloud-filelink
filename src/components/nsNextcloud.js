@@ -361,8 +361,13 @@ Nextcloud.prototype = {
 			this.log.info("Suppressing password prompt");
 		}
 
-    let passwordURI = this._serverUrl;
-		let logins = Services.logins.findLogins({}, passwordURI, null, passwordURI);
+    let passwordRealm = this._serverUrl;
+    let passwordHostname = this._serverUrl;
+    const thirdSlash = this._serverUrl.indexOf('/', 9);
+		if (thirdSlash !== -1) {
+			passwordHostname = this._serverUrl.slice(0, thirdSlash);
+		}
+		let logins = Services.logins.findLogins({}, passwordHostname, null, passwordRealm);
 		for (let loginInfo of logins) {
 			if (loginInfo.username == aUsername) {
 				return loginInfo.password;

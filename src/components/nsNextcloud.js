@@ -361,7 +361,7 @@ Nextcloud.prototype = {
 			this.log.info("Suppressing password prompt");
 		}
 
-		let passwordURI = this._fullUrl;
+    let passwordURI = this._serverUrl;
 		let logins = Services.logins.findLogins({}, passwordURI, null, passwordURI);
 		for (let loginInfo of logins) {
 			if (loginInfo.username == aUsername) {
@@ -378,10 +378,9 @@ Nextcloud.prototype = {
 		let authPrompter = Services.ww.getNewAuthPrompter(win);
 		let password = {value: ""};
 		// Use the service name in the prompt text
-		let userPos = this._fullUrl.indexOf("//") + 2;
-		let userNamePart = encodeURIComponent(this._userName) + '@';
-		let serverUrl =
-			this._fullUrl.substr(0, userPos) + userNamePart + this._fullUrl.substr(userPos);
+    let userPos = this._fullUrl.indexOf("//") + 2;
+    let userNamePart = encodeURIComponent(this._userName) + '@';
+    let serverUrl = this._fullUrl.substr(0, userPos) + userNamePart + this._fullUrl.substr(userPos);
 		let messengerBundle = Services.strings.createBundle(
 			"chrome://messenger/locale/messenger.properties");
 		let promptString = messengerBundle.formatStringFromName("passwordPrompt",
@@ -445,7 +444,7 @@ Nextcloud.prototype = {
 			"Basic " + btoa(this._userName + ':' + this._password));
 
 		req.onerror = function () {
-			this.log.info("logon failure");
+			this.log.error("logon failure");
 
 			failureCallback();
 		}.bind(this);
@@ -580,7 +579,7 @@ Nextcloud.prototype = {
 		req.open("PROPFIND", this._fullUrl + kWebDavPath, true,
 			this._userName, this._password);
 		req.onerror = function () {
-			this.log.info("logon failure");
+			this.log.error("logon failure");
 			failureCallback();
 		}.bind(this);
 
@@ -780,7 +779,7 @@ NextcloudFileUploader.prototype = {
 		req.open("PUT", url, true, this._userName, this._password);
 
 		req.onerror = function () {
-			this.log.info("Could not upload file");
+			this.log.error("Could not upload file");
 			if (this.callback) {
 				this.callback(this.requestObserver,
 					Ci.nsIMsgCloudFileProvider.uploadErr);
@@ -799,7 +798,7 @@ NextcloudFileUploader.prototype = {
 		}.bind(this);
 
 		req.setRequestHeader("Content-Length", contentLength);
-		req.send(bufStream);
+		req.sendInputStream(bufStream);
 	},
 
 	/**

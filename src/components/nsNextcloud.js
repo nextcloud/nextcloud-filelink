@@ -39,7 +39,6 @@ Cu.importGlobalProperties(["XMLHttpRequest"]);
 
 const kRestBase = "/ocs/v1.php";
 const kAuthPath = kRestBase + "/cloud/user";
-const kInfoPath = kRestBase + "/cloud/users";
 const kShareApp = kRestBase + "/apps/files_sharing/api/v1/shares";
 const kWebDavPath = "/remote.php/webdav";
 
@@ -577,7 +576,7 @@ Nextcloud.prototype = {
 		let args = "?format=json";
 		let req = new XMLHttpRequest(Ci.nsIXMLHttpRequest);
 
-		req.open("GET", this._fullUrl + kInfoPath + '/' + this._userName + args, true);
+		req.open("GET", this._fullUrl + kAuthPath + args, true);
 		req.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 		req.setRequestHeader("OCS-APIREQUEST", "true");
 		req.setRequestHeader("Authorization",

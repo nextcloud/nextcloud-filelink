@@ -133,6 +133,7 @@ Nextcloud.prototype = {
 	_uploads: [],
 	_urlsForFiles: {},
 	_uploadInfo: {}, // upload info keyed on aFiles.
+	_days2expiry: 0,
 
 	/**
 	 * Initialize this instance of Nextcloud, setting the accountKey.
@@ -168,6 +169,8 @@ Nextcloud.prototype = {
 		if (this._prefBranch.prefHasUserValue("protectUploads")) {
 			this._protectUploads = this._prefBranch.getCharPref("protectUploads");
 		}
+
+		this._days2expiry = this._prefBranch.getIntPref("days2expiry");
 	},
 
 	/**
@@ -868,6 +871,13 @@ NextcloudFileUploader.prototype = {
 		// Request a password for the link if it has been defined during setup time
 		if (this.nextcloud._protectUploads.length) {
 			formData += "&password=" + wwwFormUrlEncode(this.nextcloud._protectUploads);
+		}
+
+		if (this.nextcloud._days2expiry) {
+			var expiry = new Date();
+			expiry.setTime(expiry.getTime() + this.nextcloud._days2expiry * 24 * 3600 * 1000);
+			expiry.setMinutes(expiry.getMinutes() - expiry.getTimezoneOffset());
+			formData += "&expireDate=" + expiry.toISOString().slice(0, 10);
 		}
 
 		req.open("POST",

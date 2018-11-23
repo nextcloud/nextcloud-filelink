@@ -36,7 +36,8 @@ function extraArgs () {
 	let portValue = document.getElementById("port").value;
 	let storageFolderValue = document.getElementById("storageFolder").value;
 	let userValue = document.getElementById("username").value;
-	let protectUploadsValue = document.getElementById("protectUploads").value;
+    let protectUploadsValue = document.getElementById("protectUploads").value;
+    let days2expiryValue = document.getElementById("days2expiry").value;
 
 	return {
 		"displayName": {
@@ -62,6 +63,10 @@ function extraArgs () {
 		"protectUploads": {
 			type: "char",
 			value: protectUploadsValue
+		},
+		"days2expiry": {
+			type: "int",
+			value: days2expiryValue
 		}
 	};
 }

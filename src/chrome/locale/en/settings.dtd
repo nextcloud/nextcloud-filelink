@@ -30,3 +30,4 @@
 		<!ENTITY nextcloudSettings.username "Username">
 		<!ENTITY nextcloudSettings.password "Password">
 		<!ENTITY nextcloudSettings.protectUploads "Password for uploaded files">
+		<!ENTITY nextcloudSettings.days2expiry "Number of days to expiration">

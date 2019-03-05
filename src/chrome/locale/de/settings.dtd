@@ -30,3 +30,4 @@
 		<!ENTITY nextcloudSettings.username "Benutzername">
 		<!ENTITY nextcloudSettings.password "Passwort">
 		<!ENTITY nextcloudSettings.protectUploads "Passwort für hochgeladene Dateien">
+		<!ENTITY nextcloudSettings.useRandomPassword "Verwenden Sie für jeden Upload ein zufälliges Passwort">

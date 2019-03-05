@@ -30,3 +30,4 @@
 		<!ENTITY nextcloudSettings.username "Nom d'utilisateur">
 		<!ENTITY nextcloudSettings.password "Mot de passe">
 		<!ENTITY nextcloudSettings.protectUploads "Mot de passe pour fichiers téléversés">
+		<!ENTITY nextcloudSettings.useRandomPassword "Utilisez un mot de passe aléatoire pour chaque téléchargement">

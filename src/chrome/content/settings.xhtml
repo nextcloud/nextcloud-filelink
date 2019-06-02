@@ -50,6 +50,9 @@
 	<input id="storageFolder" type="text" required="true" value="/Mail-attachments"/>
 	<label for="protectUploads">&nextcloudSettings.protectUploads;</label>
 	<input id="protectUploads" type="password" value=""/>
+	<label for="useRandomPassword">
+		<input id="useRandomPassword" type="checkbox" style="display: inline-block; width: auto;" onclick="onUseRandomPasswordClick();"/>&nextcloudSettings.useRandomPassword;
+	</label>
 </form>
 <div id="learn-more">
 	<a href="https://nextcloud.com/">&nextcloudSettings.learnMore;</a>

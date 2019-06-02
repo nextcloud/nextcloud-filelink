@@ -114,6 +114,7 @@ Nextcloud.prototype = {
 	_userName: "",
 	_password: "",
 	_protectUploads: "",
+	_useRandomPassword: false,
 	_prefBranch: null,
 	_loggedIn: false,
 	_authToken: "",
@@ -133,6 +134,7 @@ Nextcloud.prototype = {
 	_uploads: [],
 	_urlsForFiles: {},
 	_uploadInfo: {}, // upload info keyed on aFiles.
+	_messageWindow: null,
 
 	/**
 	 * Initialize this instance of Nextcloud, setting the accountKey.
@@ -168,6 +170,14 @@ Nextcloud.prototype = {
 		if (this._prefBranch.prefHasUserValue("protectUploads")) {
 			this._protectUploads = this._prefBranch.getCharPref("protectUploads");
 		}
+
+		if (this._prefBranch.prefHasUserValue("useRandomPassword")) {
+			this._useRandomPassword = this._prefBranch.getBoolPref("useRandomPassword");
+		}
+
+		let windowMediator = Components.classes["@mozilla.org/appshell/window-mediator;1"]
+			.getService(Components.interfaces.nsIWindowMediator);
+		this._messageWindow = windowMediator.getMostRecentWindow("msgcompose");
 	},
 
 	/**
@@ -237,6 +247,32 @@ Nextcloud.prototype = {
 	 * @param aFile the nsILocalFile to retrieve the URL for
 	 */
 	urlForFile: function nsNc_urlForFile (aFile) {
+		if (this._uploadInfo["downloadPassword"] == null) {
+			return this._urlsForFiles[aFile.path];
+		}
+
+		// Output download password
+		let document = this._messageWindow.document;
+		let contentFrame = document.getElementById("content-frame");
+		let contentDocument = contentFrame.contentDocument;
+		this.log.debug("Document body: " + contentDocument.body.innerHTML);
+
+		let cloudAttachmentPasswordList = contentDocument.getElementById("cloudAttachmentPasswordList");
+		if (cloudAttachmentPasswordList == null) {
+			// First cloud attachment
+			contentDocument.body.insertAdjacentHTML("afterbegin",
+				'<div id="cloudAttachmentPasswordList"></div>');
+			cloudAttachmentPasswordList = contentDocument.getElementById("cloudAttachmentPasswordList");
+		}
+		cloudAttachmentPasswordList.insertAdjacentHTML("beforeend",
+			'<div class="cloudAttachmentPassword">* Download password for '
+				+ aFile.leafName + ":<br>"
+				+ this._uploadInfo["downloadPassword"] + '</div>');
+
+		if (contentFrame.editortype == "textmail") {
+			// Start a new line before url
+			return "\n" + this._urlsForFiles[aFile.path];
+		}
 		return this._urlsForFiles[aFile.path];
 	},
 
@@ -866,8 +902,15 @@ NextcloudFileUploader.prototype = {
 
 		let formData = "shareType=" + shareType + "&path=" + path;
 		// Request a password for the link if it has been defined during setup time
-		if (this.nextcloud._protectUploads.length) {
-			formData += "&password=" + wwwFormUrlEncode(this.nextcloud._protectUploads);
+		let downloadPassword = this.nextcloud._protectUploads;
+		// Use random password for each upload
+		if (this.nextcloud._useRandomPassword) {
+			downloadPassword = this._generatePassword(16);
+		}
+		if (downloadPassword.length) {
+			this.log.debug("FormData password: " + downloadPassword);
+			this.nextcloud._uploadInfo["downloadPassword"] = downloadPassword;
+			formData += "&password=" + wwwFormUrlEncode(downloadPassword);
 		}
 
 		req.open("POST",
@@ -918,6 +961,48 @@ NextcloudFileUploader.prototype = {
 		}.bind(this);
 		this.log.debug("Raw formData: " + formData);
 		req.send(formData);
+	},
+
+	/**
+	 * A private function which generates a password.
+	 *
+	 * On Nextcloud, most strict password policy require:
+	 * - Enforce upper and lower case characters
+	 * - Enforce numeric characters
+	 * - Enforce special characters
+	 *
+	 * @param length password length
+	 * @private
+	 */
+	_generatePassword: function generatePassword(length) {
+		const lower = "abcdefghijklmnopqrstuvwxyz";
+		const upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+		const numeric = "0123456789"
+		// Excludes characters that fail to output if continuous: <>
+		const special = "!\"#$%&'()*+,-./:;=?@[\\]^_`{|}~";
+		const seed = lower + upper + numeric + special;
+
+		const lowerRegex = new RegExp("[" + lower + "]");
+		const upperRegex = new RegExp("[" + upper + "]");
+		const numericRegex = new RegExp("[" + numeric + "]");
+		const specialRegex = new RegExp("[" + special + "]");
+
+		let limit = 100000;
+		let i = 0;
+		let password = "";
+		while (i < limit) {
+			i++;
+			password = Array.from(Array(length)).map(() => seed[Math.floor(Math.random() * seed.length)]).join("");
+
+			if (!lowerRegex.test(password)) continue;
+			if (!upperRegex.test(password)) continue;
+			if (!numericRegex.test(password)) continue;
+			if (!specialRegex.test(password)) continue;
+
+			break;
+		}
+		this.log.debug("Generated password: " + i + ": " + password);
+		return password;
 	}
 };
 

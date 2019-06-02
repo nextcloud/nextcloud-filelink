@@ -28,7 +28,7 @@
  *     string, value: *}, port: {type: string, value: (string|string|string|Number)},
  *     storageFolder: {type: string, value: (string|string|string|Number)}, username: {type:
  *     string, value: (string|string|string|Number)}, protectUploads: {type: string, value:
- *     (string|string|string|Number)}}}
+ *     (string|string|string|Number), useRandomPassword: {type: bool, value: bool}}}
  */
 function extraArgs () {
 	let displayName = document.getElementById("displayName").value;
@@ -37,6 +37,7 @@ function extraArgs () {
 	let storageFolderValue = document.getElementById("storageFolder").value;
 	let userValue = document.getElementById("username").value;
 	let protectUploadsValue = document.getElementById("protectUploads").value;
+	let useRandomPasswordValue = document.getElementById("useRandomPassword").checked;
 
 	return {
 		"displayName": {
@@ -62,6 +63,19 @@ function extraArgs () {
 		"protectUploads": {
 			type: "char",
 			value: protectUploadsValue
+		},
+		"useRandomPassword": {
+			type: "bool",
+			value: useRandomPasswordValue
 		}
 	};
+}
+
+function onUseRandomPasswordClick () {
+	let useRandomPassword = document.getElementById("useRandomPassword").checked;
+	if (useRandomPassword) {
+		document.getElementById("protectUploads").disabled = "disabled";
+	} else {
+		document.getElementById("protectUploads").disabled = "";
+	}
 }

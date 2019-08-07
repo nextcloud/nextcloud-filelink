@@ -29,7 +29,7 @@
       <Description>
         <em:locale>es</em:locale>
         <em:name>Soporte de Nextcloud para Filelink</em:name>
-        <em:description>Añade soporte de Nextcloud para la característica Filelink en Thunderbird.</em:description>
+        <em:description>Añade soporte de Nextcloud para la característica Filelink en Thunderbird</em:description>
       </Description>
     </em:localized>
 
@@ -38,6 +38,14 @@
         <em:locale>fr</em:locale>
         <em:name>Nextcloud pour Filelink</em:name>
         <em:description>Ajout du support de Nextcloud pour la fonction Filelink de Thunderbird</em:description>
+      </Description>
+    </em:localized>
+
+    <em:localized>
+      <Description>
+        <em:locale>hu</em:locale>
+        <em:name>Nextcloud óriásfájl-küldése (Nextcloud for Filelink)</em:name>
+        <em:description>Nextcloud szolgáltató a Thunderbird óriásfájl-küldés számára</em:description>
       </Description>
     </em:localized>
 

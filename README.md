@@ -50,8 +50,8 @@ Once setup is complete, Thunderbird will always ask you if you want to upload bi
 
 ## Requirements
 
-* Nextcloud: 11.0.2 and newer
-* Thunderbird: 17.0 and newer
+* [Nextcloud](https://nextcloud.org/): 11.0.2 and newer
+* [Thunderbird](https://www.thunderbird.net/): 17.0 and newer
 
 ## Known issues
 
@@ -71,7 +71,7 @@ Licensed under the GNU AGPL version 3 or any later version
 All contributions to this repository from February, 10 2017 on are considered to be
 licensed under the AGPLv3 or any later version.
 
-“Nextcloud for Filelink” doesn't require a CLA (Contributor License Agreement).
+“Nextcloud for Filelink” doesn’t require a CLA (Contributor License Agreement).
 The copyright belongs to all the individual contributors. Therefore we recommend
 that every contributor adds following line to the header of a file, if they
 changed it substantially:

@@ -24,7 +24,7 @@ It is currently possible to upload files as large as 1GB.
 
 1. Zip all files located in the `src` folder such that the install.rdf and chrome.manifest are located in the root folder of the zip file
 1. Change the file extension from .zip to .xpi
-1. Open your Thunderbird, navigate to `Tools -> Add-ons`, choose “Install Add-on From File…” and select the .xpi file
+1. Open your Thunderbird, navigate to `Tools → Add-ons`, choose “Install Add-on From File…” and select the .xpi file
 1. After installation restart Thunderbird
 
 ## Nextcloud configuration
@@ -38,7 +38,7 @@ It is currently possible to upload files as large as 1GB.
 
 ![Screenshot](https://raw.githubusercontent.com/nextcloud/nextcloud-filelink/master/screenshots/setup.png)
 
-1. Navigate to `Edit -> Preferences -> Attachments` 
+1. Navigate to `Edit → Preferences → Attachments` 
 1. Choose the `Outgoing` tab
 1. Click the Add button. The “Set up Filelink” panel will open.
 1. Select the desired service provider from the drop-down list.

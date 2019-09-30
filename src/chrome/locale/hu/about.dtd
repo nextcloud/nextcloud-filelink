@@ -1,0 +1,39 @@
+<!--
+/**
+ * @copyright Copyright (c) 2017, Olivier Paroz (github@oparoz.com)
+ * @copyright Copyright (c) 2017, Philipp Kewisch
+ * @copyright Copyright (c) 2017, Mark James
+ * @copyright Copyright (c) 2017, Guillaume Viguier-Just (@guillaumev)
+ * @copyright Copyright (c) 2019, Óvári
+ *
+ * @license GNU AGPL version 3 or any later version
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+-->
+		<!ENTITY nextcloudAbout.name "Nextcloud óriásfájl-küldése">
+		<!ENTITY nextcloudAbout.title "A Nextcloud óriásfájl-küldése névjegye">
+		<!ENTITY nextcloudAbout.usp "Nextcloud: Minden adatának biztonságos otthona.">
+		<!ENTITY nextcloudAbout.description "Hozzáférés, megosztás és védelme fájljainak, naptárainak, névjegyeinek, közléseinek és egyebeknek otthon és a vállalkozásban.">
+		<!ENTITY nextcloudAbout.likeUs "Ha tetszik ez a kiegészítő, akkor érdemes lehet">
+		<!ENTITY nextcloudAbout.contributing "hozzájárulást">
+		<!ENTITY nextcloudAbout.or "vagy">
+		<!ENTITY nextcloudAbout.purchase "előfizetést vásárolnia">
+		<!ENTITY nextcloudAbout.version "Verzió">
+		<!ENTITY nextcloudAbout.createdBy "Készítette">
+		<!ENTITY nextcloudAbout.closeButton "Bezárás">
+		<!ENTITY nextcloudAbout.license "Engedély">
+		<!ENTITY nextcloudAbout.licenseDescription "A GNU AGPL 3-as vagy bármely újabb verziója alatt engedélyezett">
+

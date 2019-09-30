@@ -12,6 +12,7 @@
     <em:contributor>Philipp Kewisch</em:contributor>
     <em:contributor>Mark James</em:contributor>
     <em:contributor>Guillaume Viguier-Just</em:contributor>
+    <em:translator>Óvári (hu)</em:translator>
 
     <em:description>Nextcloud provider for Thunderbird Filelink</em:description>
     <em:homepageURL>https://github.com/nextcloud/nextcloud-filelink</em:homepageURL>
@@ -29,7 +30,8 @@
       <Description>
         <em:locale>es</em:locale>
         <em:name>Soporte de Nextcloud para Filelink</em:name>
-        <em:description>Añade soporte de Nextcloud para la característica Filelink en Thunderbird.</em:description>
+        <em:translator>Óvári (hu)</em:translator>
+        <em:description>Añade soporte de Nextcloud para la característica Filelink en Thunderbird</em:description>
       </Description>
     </em:localized>
 
@@ -37,7 +39,17 @@
       <Description>
         <em:locale>fr</em:locale>
         <em:name>Nextcloud pour Filelink</em:name>
+        <em:translator>Óvári (hu)</em:translator>
         <em:description>Ajout du support de Nextcloud pour la fonction Filelink de Thunderbird</em:description>
+      </Description>
+    </em:localized>
+
+    <em:localized>
+      <Description>
+        <em:locale>hu</em:locale>
+        <em:name>Nextcloud óriásfájl-küldése (Nextcloud for Filelink)</em:name>
+        <em:translator>Óvári (hu)</em:translator>
+        <em:description>Nextcloud szolgáltató a Thunderbird óriásfájl-küldés számára</em:description>
       </Description>
     </em:localized>
 

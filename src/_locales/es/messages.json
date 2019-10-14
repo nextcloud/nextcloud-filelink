@@ -1,0 +1,14 @@
+{
+  "extensionName": {
+    "message": "Soporte de Nextcloud para Filelink",
+    "description": "Name of the extension"
+  },
+  "extensionDescription": {
+    "message": "Añade soporte de Nextcloud para la característica Filelink en Thunderbird.",
+    "description": "Description of the extension"
+  },
+  "serviceName": {
+    "message": "Nextcloud",
+    "description": "Name of the service"
+  }
+}

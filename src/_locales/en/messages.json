@@ -1,0 +1,23 @@
+{
+  "extensionName": {
+    "message": "Nextcloud for Filelink",
+    "description": "Name of the extension"
+  },
+  "extensionDescription": {
+    "message": "Nextcloud provider for Thunderbird Filelink",
+    "description": "Description of the extension"
+  },
+  "serviceName": {
+    "message": "Nextcloud",
+    "description": "Name of the service"
+  },
+  "notAuthed_clickHere": {
+    "message": "Connect your Nextcloud account\u2026"
+  },
+  "urlHeader": {
+    "message": "Nextcloud URL:"
+  },
+  "urlDescription": {
+    "message": "URL to your Nextcloud server"
+  }
+}

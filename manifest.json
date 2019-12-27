@@ -21,7 +21,8 @@
     },
     "cloud_file": {
         "name": "Nextcloud",
-        "management_url": "management.html"
+        "management_url": "management.html",
+        "data_format": "ArrayBuffer"
     },
     "permissions": [
         "<all_urls>",

@@ -70,9 +70,7 @@ saveButton.onclick = async () => {
     };
     server.value = server.value.replace(/\/+$/, "");
 
-    if (!storageFolder.value.endsWith("/")) {
-        storageFolder.value += "/";
-    }
+    storageFolder.value = storageFolder.value.replace(/\/+$/, "");
     if (!storageFolder.value.startsWith("/")) {
         storageFolder.value = "/" + storageFolder.value;
     }

@@ -1,0 +1,32 @@
+{
+  "extensionDescription": {
+    "message": "Upload large attachments to your Nextcloud instead of sending them by email"
+  },
+  "extensionName": {
+    "message": "FileLink Provider for Nextcloud"
+  },
+  "serviceName": {
+    "message": "Nextcloud"
+  },
+  "accountData_saveButton": {
+    "message": "Save"
+  },
+  "accountData_cancelButton": {
+    "message": "Cancel"
+  },
+  "accountData_server": {
+    "message": "Server URL"
+  },
+  "accountData_port": {
+    "message": "Port number"
+  },
+  "accountData_user": {
+    "message": "Username"
+  },
+  "accountData_password": {
+    "message": "Password"
+  },
+  "accountData_folder": {
+    "message": "Storage path in Nextcloud"
+  }
+}

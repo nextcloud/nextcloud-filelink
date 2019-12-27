@@ -1,0 +1,31 @@
+{
+    "manifest_version": 2,
+    "applications": {
+        "gecko": {
+            "id": "nextcloud@johannes-endres.de",
+            "strict_min_version": "68.0"
+        }
+    },
+    "name": "__MSG_extensionName__",
+    "description": "__MSG_extensionDescription__",
+    "homepage_url": "https://github.com/nextcloud/nextcloud-filelink",
+    "author": "Johannes Endres",
+    "version": "2.0",
+    "icons": {
+        "64": "icon64.png"
+    },
+    "background": {
+        "scripts": [
+            "background.js"
+        ]
+    },
+    "cloud_file": {
+        "name": "Nextcloud",
+        "management_url": "management.html"
+    },
+    "permissions": [
+        "<all_urls>",
+        "storage"
+    ],
+    "default_locale": "en"
+}

@@ -3,72 +3,97 @@ let accountData = document.getElementById("accountData");
 let server = document.getElementById("server");
 let port = document.getElementById("port");
 let username = document.getElementById("username");
+let password = document.getElementById("password");
 let storageFolder = document.getElementById("storageFolder");
 let saveButton = document.getElementById("saveButton");
-let cancelButton = document.getElementById("cancelButton");
+let resetButton = document.getElementById("resetButton");
 
 (() => {
     for (let element of document.querySelectorAll("[data-message]")) {
         element.textContent = browser.i18n.getMessage(element.dataset.message);
+        // TODO Also set titles explaining the expected data
     }
 })();
+
+async function setStoredData() {
+    accountInfo = await browser.storage.local.get([accountId]);
+    if (accountId in accountInfo) {
+        // Disable input while handling it
+        for (let element of document.querySelectorAll("input")) {
+            element.disabled = true;
+        };
+        for (const key in accountInfo[accountId]) {
+            let element = document.getElementById(key);
+            if (element && accountInfo[accountId].hasOwnProperty(key)) {
+                element.value = accountInfo[accountId][key];
+            }
+        }
+        // Disable input while handling it
+        for (let element of document.querySelectorAll("input")) {
+            element.disabled = false;
+        };
+    }
+}
+
+/** Only activate the Save button, if the form input is OK */
+function activateSave() {
+    if (accountData.checkValidity()) {
+        saveButton.disabled = false;
+    } else {
+        saveButton.disabled = true;
+    };
+    resetButton.disabled = false;
+}
 
 browser.cloudFile.getAccount(accountId).then(
     theAccount => {
         document.getElementById("serviceName").textContent = theAccount.name;
-        // TODO Move this to form changed handler
-        if (theAccount.configured) {
-            cancelButton.hidden = false;
-        };
     });
 setStoredData(accountId);
 
-async function setStoredData(aID) {
-    accountInfo = await browser.storage.local.get([aID]);
-    if (aID in accountInfo) {
-        for (const key in accountInfo[aID]) {
-            let element = document.getElementById(key);
-            if (element && accountInfo[aID].hasOwnProperty(key)) {
-                element.value = accountInfo[aID][key];
-            }
-        }
-    }
+for (const inp of document.querySelectorAll("input")) {
+    inp.oninput = activateSave;
 }
 
-cancelButton.onclick = setStoredData(accountId);
+/** Handler for Cancel button, restores saved values */
+resetButton.onclick = setStoredData;
 
 /** Handler for Save button */
 saveButton.onclick = async () => {
-    // Only accept valid form data
-    // TODO implement Check
-    if (!accountData.checkValidity()) {
-        return;
-    }
 
-    // Disable input while handling it
-    for (let element of document.getElementsByTagName("input")) {
+    saveButton.disabled = resetButton.disabled = true;
+
+    // Sanitize input
+    for (let element of document.querySelectorAll("input")) {
         element.disabled = true;
+        element.value = element.value.trim();
     };
+    server.value = server.value.replace(/\/+$/, "");
 
-    // sanitize input
-    let server_url = server.value.trim().replace(/\/+$/, "");
-    server.value = server_url;
+    if (!storageFolder.value.endsWith("/")) {
+        storageFolder.value += "/";
+    }
+    if (!storageFolder.value.startsWith("/")) {
+        storageFolder.value = "/" + storageFolder.value;
+    }
 
     // Store account data
     let start = Date.now();
     await browser.storage.local.set({
         [accountId]:
         {
-            server: server_url,
+            server: server.value,
             port: port.value,
             username: username.value,
+            password: password.value,
             storageFolder: storageFolder.value,
         },
     });
     await browser.cloudFile.updateAccount(accountId, { configured: true });
     setTimeout(() => {
-        for (let element of document.getElementsByTagName("input")) {
-            element.disabled = false;
-        }
+        for (let element of document.querySelectorAll("input")) {
+                element.disabled = false;                
+        };
+        saveButton.disabled = resetButton.disabled = true;
     }, Math.max(0, start + 500 - Date.now()));
 };

@@ -11,20 +11,23 @@
 <body>
   <h2 id="serviceName"></h2>
   <form id="accountData">
-      <label for="server" data-message="accountData_server"></label>
-      <input id="server" type="text" required="true" size="80" autofocus placeholder="https://example.com"/>
-      <br>
-      <label for="port" data-message="accountData_port"></label>
-      <input id="port" type="number" min="1" max="65535" required="true" value="443" />
-      <br>
-      <label for="username" data-message="accountData_user"></label>
-      <input id="username" type="text" required="true" />
-      <br>
-      <label for="storageFolder" data-message="accountData_folder"></label>
-      <input id="storageFolder" type="text" required="true" value="/Mail-attachments" />
-      <br>
-      <button id="saveButton" type="button"  data-message="accountData_saveButton"></button>
-      <button id="cancelButton" type="reset" disabled hidden="true" data-message="accountData_cancelButton"></button>
+    <label for="server" data-message="accountData_server"></label>
+    <input id="server" type="url" required="true" size="80" placeholder="https://example.com" />
+    <br>
+    <label for="port" data-message="accountData_port"></label>
+    <input id="port" type="number" min="1" max="65535" required="true" value="443" />
+    <br>
+    <label for="username" data-message="accountData_user"></label>
+    <input id="username" type="text" required="true" />
+    <br>
+    <label for="password" data-message="accountData_password"></label>
+    <input id="password" type="password" required="true" />
+    <br>
+    <label for="storageFolder" data-message="accountData_folder"></label>
+    <input id="storageFolder" type="text" required="true" value="/Mail-attachments/" />
+    <br>
+    <button id="saveButton" type="button" disabled data-message="accountData_saveButton"></button>
+    <button id="resetButton" type="button" disabled data-message="accountData_resetButton"></button>
   </form>
 
 </body>

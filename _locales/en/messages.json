@@ -11,8 +11,8 @@
   "accountData_saveButton": {
     "message": "Save"
   },
-  "accountData_cancelButton": {
-    "message": "Cancel"
+  "accountData_resetButton": {
+    "message": "Reset"
   },
   "accountData_server": {
     "message": "Server URL"
@@ -24,7 +24,7 @@
     "message": "Username"
   },
   "accountData_password": {
-    "message": "Password"
+    "message": "Password or app token"
   },
   "accountData_folder": {
     "message": "Storage path in Nextcloud"

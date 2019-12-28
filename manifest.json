@@ -8,7 +8,7 @@
     },
     "name": "__MSG_extensionName__",
     "description": "__MSG_extensionDescription__",
-    "homepage_url": "https://github.com/nextcloud/nextcloud-filelink",
+    "homepage_url": "https://gitlab.com/joendres/nextcloud-filelink2",
     "author": "Johannes Endres",
     "version": "2.0",
     "icons": {
@@ -22,7 +22,8 @@
     "cloud_file": {
         "name": "Nextcloud",
         "management_url": "management.html",
-        "data_format": "ArrayBuffer"
+        "data_format": "ArrayBuffer",
+        "service_url": "https://nextcloud.com"
     },
     "permissions": [
         "<all_urls>",

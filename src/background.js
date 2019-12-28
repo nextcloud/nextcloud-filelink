@@ -118,10 +118,8 @@ browser.cloudFile.onFileUpload.addListener(async (account, { id, name, data }) =
     return { url: parsedResponse.ocs.data.url };
 });
 
-// TODO Test this. I have no idea when TB calls it
 /** Try to delete a file */
 browser.cloudFile.onFileDeleted.addListener(async (account, id) => {
-    console.debug("Thunderbird wants to delete Upload " + id);
     let uploadInfo = uploads.get(id);
     // If we don't have enough information about this upload, we can't delete it.
     if (!uploadInfo || !("name" in uploadInfo)) {
@@ -138,7 +136,7 @@ browser.cloudFile.onFileDeleted.addListener(async (account, id) => {
     url += webDavUrl;
     url += accountInfo[account.id].username;
     url += accountInfo[account.id].storageFolder;
-    url += '/' + wwwFormUrlEncode(name);
+    url += '/' + wwwFormUrlEncode(uploadInfo.name);
 
     let headers = {
         "Authorization": authHeader
@@ -149,7 +147,7 @@ browser.cloudFile.onFileDeleted.addListener(async (account, id) => {
         headers,
     };
     // Just do it, nothing we can do about errors
-    fetch(url, fetchInfo);
+    await fetch(url, fetchInfo);
 
     uploads.delete(id);
 

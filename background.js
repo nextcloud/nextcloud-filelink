@@ -32,11 +32,10 @@ browser.cloudFile.onFileUpload.addListener(async (account, { id, name, data }) =
     uploads.set(id, uploadInfo);
 
     // Combine some things we will be needing
-    let serverUrl = accountInfo[account.id].server + ':' + accountInfo[account.id].port;
     let authHeader = "Basic " + btoa(accountInfo[account.id].username + ':' + accountInfo[account.id].password);
 
     // URL of the folder to create
-    let url = serverUrl;
+    let url = accountInfo[account.id].serverUrl;
     url += kWebDavPath;
     url += accountInfo[account.id].username;
     url += accountInfo[account.id].storageFolder;
@@ -74,7 +73,7 @@ browser.cloudFile.onFileUpload.addListener(async (account, { id, name, data }) =
     let shareFormData = "path=" + wwwFormUrlEncode(accountInfo[account.id].storageFolder + "/" + name);
     shareFormData += "&shareType=3";
 
-    url = serverUrl + kShareApp + "?format=json";
+    url = accountInfo[account.id].serverUrl + kShareApp + "?format=json";
 
     headers = {
         'Content-Type': "application/x-www-form-urlencoded",
@@ -116,11 +115,10 @@ browser.cloudFile.onFileDeleted.addListener(async (account, id) => {
     let accountInfo = await browser.storage.local.get(account.id);
 
     // Combine some things we will be needing
-    let serverUrl = accountInfo[account.id].server + ':' + accountInfo[account.id].port;
     let authHeader = "Basic " + btoa(accountInfo[account.id].username + ':' + accountInfo[account.id].password);
 
     // URL of the folder to create
-    let url = serverUrl;
+    let url = accountInfo[account.id].serverUrl;
     url += kWebDavPath;
     url += accountInfo[account.id].username;
     url += accountInfo[account.id].storageFolder;

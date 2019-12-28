@@ -8,11 +8,8 @@
   "accountData_resetButton": {
     "message": "Zurück"
   },
-  "accountData_server": {
+  "serverUrl": {
     "message": "Server-URL"
-  },
-  "accountData_port": {
-    "message": "Portnummer"
   },
   "accountData_user": {
     "message": "Username"

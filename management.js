@@ -1,7 +1,6 @@
 let accountId = new URL(location.href).searchParams.get("accountId");
 let accountData = document.getElementById("accountData");
-let server = document.getElementById("server");
-let port = document.getElementById("port");
+let serverUrl = document.getElementById("serverUrl");
 let username = document.getElementById("username");
 let password = document.getElementById("password");
 let storageFolder = document.getElementById("storageFolder");
@@ -68,7 +67,7 @@ saveButton.onclick = async () => {
         element.disabled = true;
         element.value = element.value.trim();
     };
-    server.value = server.value.replace(/\/+$/, "");
+    serverUrl.value = serverUrl.value.replace(/\/+$/, "");
 
     storageFolder.value = storageFolder.value.replace(/\/+$/, "");
     if (!storageFolder.value.startsWith("/")) {
@@ -80,8 +79,7 @@ saveButton.onclick = async () => {
     await browser.storage.local.set({
         [accountId]:
         {
-            server: server.value,
-            port: port.value,
+            serverUrl: serverUrl.value,
             username: username.value,
             password: password.value,
             storageFolder: storageFolder.value,

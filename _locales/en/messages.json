@@ -11,11 +11,8 @@
   "accountData_resetButton": {
     "message": "Reset"
   },
-  "accountData_server": {
+  "serverUrl": {
     "message": "Server URL"
-  },
-  "accountData_port": {
-    "message": "Port number"
   },
   "accountData_user": {
     "message": "Username"

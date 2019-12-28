@@ -137,7 +137,7 @@ browser.cloudFile.onFileDeleted.addListener(async (account, id) => {
     fetch(url, fetchInfo);
 
     uploads.delete(id);
-}
+});
 
 /** Copy & Paste from Dropbox extension */
 browser.cloudFile.onFileUploadAbort.addListener((account, id) => {

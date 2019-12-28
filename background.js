@@ -1,6 +1,7 @@
 var uploads = new Map();
 
 const kRestBase = "/ocs/v2.php";
+const kUserInfo = kRestBase + "/cloud/users/";
 const kAuthPath = kRestBase + "/cloud/user";
 const kShareApp = kRestBase + "/apps/files_sharing/api/v1/shares";
 const kWebDavPath = "/remote.php/dav/files/";
@@ -96,6 +97,7 @@ browser.cloudFile.onFileUpload.addListener(async (account, { id, name, data }) =
     }
 
     delete uploadInfo.abortController;
+    updateStorageInfo(account.id);
 
     let parsedResponse = await response.json();
 
@@ -136,6 +138,8 @@ browser.cloudFile.onFileDeleted.addListener(async (account, id) => {
     fetch(url, fetchInfo);
 
     uploads.delete(id);
+
+    updateStorageInfo(account.id);
 });
 
 /** Copy & Paste from Dropbox extension */
@@ -145,6 +149,39 @@ browser.cloudFile.onFileUploadAbort.addListener((account, id) => {
         uploadInfo.abortController.abort();
     }
 });
+
+async function updateStorageInfo(accountId) {
+    let accountInfo = await browser.storage.local.get(accountId);
+
+    // Combine some things we will be needing
+    let authHeader = "Basic " + btoa(accountInfo[accountId].username + ':' + accountInfo[accountId].password);
+
+    // URL of the folder to create
+    let url = accountInfo[accountId].serverUrl;
+    url += kUserInfo;
+    url += accountInfo[accountId].username;
+
+    let headers = {
+        "Authorization": authHeader,
+        "OCS-APIRequest": "true"
+    };
+
+    let fetchInfo = {
+        method: "GET",
+        headers,
+    };
+
+    let response = await fetch(url, fetchInfo);
+    if (response.ok) {
+        let data = await response.json();
+        let spaceRemaining = data.ocs.data.quota.free;
+        let spaceUsed = data.ocs.data.quota.used;
+        browser.cloudFile.updateAccount(accountId, {
+            spaceRemaining: spaceRemaining > 0 ? spaceRemaining : -1,
+            spaceUsed: spaceUsed > 0 ? spaceUsed : -1,
+        })
+    }
+}
 
 /** Whenever TB starts, every provider is in configured:false state */
 browser.storage.local.get().then(

@@ -85,10 +85,14 @@ saveButton.onclick = async () => {
             storageFolder: storageFolder.value,
         },
     });
-    await browser.cloudFile.updateAccount(accountId, { configured: true });
+    await browser.cloudFile.updateAccount(accountId, {
+        configured: true,
+        // Default upload limit of Nextcloud
+        uploadSizeLimit: 512 * 1024 * 1024,
+    });
     setTimeout(() => {
         for (let element of document.querySelectorAll("input")) {
-                element.disabled = false;                
+            element.disabled = false;
         };
         saveButton.disabled = resetButton.disabled = true;
     }, Math.max(0, start + 500 - Date.now()));

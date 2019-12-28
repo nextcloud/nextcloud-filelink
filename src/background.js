@@ -86,7 +86,6 @@ browser.cloudFile.onFileUpload.addListener(async (account, { id, name, data }) =
     // Create share link
     let shareFormData = "path=" + wwwFormUrlEncode(accountInfo[account.id].storageFolder + "/" + name);
     shareFormData += "&shareType=3"; // 3 == public share
-    // TODO Add download password here, fixing issue #2
 
     url = accountInfo[account.id].serverUrl + shareApiUrl + "?format=json";
 

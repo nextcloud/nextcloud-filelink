@@ -10,7 +10,6 @@ let resetButton = document.getElementById("resetButton");
 (() => {
     for (let element of document.querySelectorAll("[data-message]")) {
         element.textContent = browser.i18n.getMessage(element.dataset.message);
-        // TODO Also set titles explaining the expected data
     }
 })();
 

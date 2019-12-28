@@ -1,10 +1,18 @@
 var uploads = new Map();
 
-const kRestBase = "/ocs/v2.php";
-const kUserInfo = kRestBase + "/cloud/users/";
-const kAuthPath = kRestBase + "/cloud/user";
-const kShareApp = kRestBase + "/apps/files_sharing/api/v1/shares";
-const kWebDavPath = "/remote.php/dav/files/";
+const apiBaseUrl = "/ocs/v2.php";
+const userInfoUrl = apiBaseUrl + "/cloud/users/";
+const shareApiUrl = apiBaseUrl + "/apps/files_sharing/api/v1/shares";
+const webDavUrl = "/remote.php/dav/files/";
+
+/** Whenever TB starts, all the providers are in configured:false state */
+browser.storage.local.get().then(
+    data => {
+        for (const key in data) {
+            browser.cloudFile.updateAccount(key, { configured: true });
+        }
+    }
+);
 
 /** encodeURIComponent does not encode every char that needs it */
 function wwwFormUrlEncode(aStr) {
@@ -13,8 +21,7 @@ function wwwFormUrlEncode(aStr) {
         .replace(/'/g, '%27')
         .replace(/\(/g, '%28')
         .replace(/\)/g, '%29')
-        .replace(/\*/g, '%2A')
-        .replace(/\@/g, '%40');
+        .replace(/\*/g, '%2A');
 }
 
 /* If an account is removed also remove its stored data */
@@ -37,25 +44,31 @@ browser.cloudFile.onFileUpload.addListener(async (account, { id, name, data }) =
 
     // URL of the folder to create
     let url = accountInfo[account.id].serverUrl;
-    url += kWebDavPath;
+    url += webDavUrl;
     url += accountInfo[account.id].username;
     url += accountInfo[account.id].storageFolder;
 
     let headers = {
+        // Content-Type is not yet necessary, but we will use the same headers for upload
         "Content-Type": "application/octet-stream",
         "Authorization": authHeader
     };
 
+    // Try to create the folder
     let fetchInfo = {
         method: "MKCOL",
         headers,
         signal: uploadInfo.abortController.signal,
     };
-    // Just do it, handle errors later
+    /* Ignore any errors, because:
+        if the folder exists, we are fine anyway
+        if creation fails for another reason, the upload will fail too and we can handle the error then.
+    */
     let response = await fetch(url, fetchInfo);
 
     //  Uplaod URL
     url += '/' + wwwFormUrlEncode(name);
+
     fetchInfo = {
         method: "PUT",
         headers,
@@ -72,9 +85,10 @@ browser.cloudFile.onFileUpload.addListener(async (account, { id, name, data }) =
 
     // Create share link
     let shareFormData = "path=" + wwwFormUrlEncode(accountInfo[account.id].storageFolder + "/" + name);
-    shareFormData += "&shareType=3";
+    shareFormData += "&shareType=3"; // 3 == public share
+    // TODO Add download password here, fixing issue #2
 
-    url = accountInfo[account.id].serverUrl + kShareApp + "?format=json";
+    url = accountInfo[account.id].serverUrl + shareApiUrl + "?format=json";
 
     headers = {
         'Content-Type': "application/x-www-form-urlencoded",
@@ -121,7 +135,7 @@ browser.cloudFile.onFileDeleted.addListener(async (account, id) => {
 
     // URL of the folder to create
     let url = accountInfo[account.id].serverUrl;
-    url += kWebDavPath;
+    url += webDavUrl;
     url += accountInfo[account.id].username;
     url += accountInfo[account.id].storageFolder;
     url += '/' + wwwFormUrlEncode(name);
@@ -156,9 +170,9 @@ async function updateStorageInfo(accountId) {
     // Combine some things we will be needing
     let authHeader = "Basic " + btoa(accountInfo[accountId].username + ':' + accountInfo[accountId].password);
 
-    // URL of the folder to create
+    // URL of the user to check
     let url = accountInfo[accountId].serverUrl;
-    url += kUserInfo;
+    url += userInfoUrl;
     url += accountInfo[accountId].username;
 
     let headers = {
@@ -182,12 +196,3 @@ async function updateStorageInfo(accountId) {
         })
     }
 }
-
-/** Whenever TB starts, every provider is in configured:false state */
-browser.storage.local.get().then(
-    data => {
-        for (const key in data) {
-            browser.cloudFile.updateAccount(key, { configured: true });
-        }
-    }
-);

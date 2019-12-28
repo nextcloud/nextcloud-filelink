@@ -14,6 +14,16 @@ let resetButton = document.getElementById("resetButton");
     }
 })();
 
+browser.cloudFile.getAccount(accountId).then(
+    theAccount => {
+        document.getElementById("provider-name").textContent = theAccount.name;
+    });
+setStoredData();
+
+for (const inp of document.querySelectorAll("input")) {
+    inp.oninput = activateSave;
+}
+
 async function setStoredData() {
     accountInfo = await browser.storage.local.get([accountId]);
     if (accountId in accountInfo) {
@@ -44,18 +54,11 @@ function activateSave() {
     resetButton.disabled = false;
 }
 
-browser.cloudFile.getAccount(accountId).then(
-    theAccount => {
-        document.getElementById("provider-name").textContent = theAccount.name;
-    });
-setStoredData(accountId);
-
-for (const inp of document.querySelectorAll("input")) {
-    inp.oninput = activateSave;
-}
-
 /** Handler for Cancel button, restores saved values */
-resetButton.onclick = setStoredData;
+resetButton.onclick = async () => {
+    setStoredData();
+    resetButton.disabled = saveButton.disabled = true;
+}
 
 /** Handler for Save button */
 saveButton.onclick = async () => {

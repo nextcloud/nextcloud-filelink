@@ -19,3 +19,4 @@ if (Test-Path -Path $xpiname) {
 Rename-Item -Path $zipname -NewName $xpiname
 
 # TODO Add error handling
+# TODO Make it work ;-) currently TB doesn't accept the xpi

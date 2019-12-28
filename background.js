@@ -145,4 +145,14 @@ browser.cloudFile.onFileUploadAbort.addListener((account, id) => {
     if (uploadInfo && uploadInfo.abortController) {
         uploadInfo.abortController.abort();
     }
-});  
+});
+
+browser.cloudFile.getAllAccounts().then(
+    async (allAccounts) => {
+        data = await browser.storage.local.get();
+
+        for (const account of allAccounts) {
+            browser.cloudFile.updateAccount(account.id, { configured: (account.id in data) })
+        }
+    }
+);

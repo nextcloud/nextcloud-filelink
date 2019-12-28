@@ -147,12 +147,10 @@ browser.cloudFile.onFileUploadAbort.addListener((account, id) => {
     }
 });
 
-browser.cloudFile.getAllAccounts().then(
-    async (allAccounts) => {
-        data = await browser.storage.local.get();
-
-        for (const account of allAccounts) {
-            browser.cloudFile.updateAccount(account.id, { configured: (account.id in data) })
+browser.storage.local.get().then(
+    data => {
+        for (const key in data) {
+            browser.cloudFile.updateAccount(key, { configured: true });
         }
     }
 );

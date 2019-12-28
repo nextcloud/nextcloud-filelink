@@ -3,31 +3,49 @@
 
 <head>
   <meta charset="utf-8" />
-  <title></title>
+  <link rel="stylesheet" type="text/css" href="management.css" />
   <script src="management.js" type="application/javascript" defer=""></script>
-  <!-- <link rel="stylesheet" type="text/css" href="chrome://messenger/skin/preferences/preferences.css" /> -->
 </head>
 
 <body>
-  <h2 id="serviceName"></h2>
+  <div id="provider-header">
+    <img id="logo" src="logo.png" alt="Nextcloud logo" />
+    <h1 id="provider-name"> </h1>
+  </div>
   <form id="accountData">
-    <label for="server" data-message="accountData_server"></label>
-    <input id="server" type="url" required="true" size="80" placeholder="https://example.com" />
-    <br>
-    <label for="port" data-message="accountData_port"></label>
-    <input id="port" type="number" min="1" max="65535" required="true" value="443" />
-    <br>
-    <label for="username" data-message="accountData_user"></label>
-    <input id="username" type="text" required="true" />
-    <br>
-    <label for="password" data-message="accountData_password"></label>
-    <input id="password" type="password" required="true" />
-    <br>
-    <label for="storageFolder" data-message="accountData_folder"></label>
-    <input id="storageFolder" type="text" required="true" value="/Mail-attachments/" />
-    <br>
-    <button id="saveButton" type="button" disabled data-message="accountData_saveButton"></button>
-    <button id="resetButton" type="button" disabled data-message="accountData_resetButton"></button>
+    <ul>
+      <li>
+        <label>
+          <h2 data-message="accountData_server"> </h2>
+          <input id="server" type="url" required placeholder="https://example.com" />
+        </label>
+      </li>
+      <li>
+        <label>
+          <h2 data-message="accountData_port"> </h2>
+          <input id="port" type="number" min="1" max="65535" required value="443" />
+        </label>
+      </li>
+      <li>
+        <label>
+          <h2 for="username" data-message="accountData_user"> </h2>
+          <input id="username" type="text" required />
+        </label>
+      </li>
+      <li>
+        <label>
+          <h2 for="password" data-message="accountData_password"> </h2>
+          <input id="password" type="password" required />
+        </label>
+      </li>
+      <li>
+        <label>
+          <h2 for="storageFolder" data-message="accountData_folder"> </h2>
+          <input id="storageFolder" type="text" required value="/Mail-attachments" />
+        </label>
+      </li>
+    </ul>
+    <button id="saveButton" class="browser-style" type="button" disabled data-message="accountData_saveButton"></button>
+    <button id="resetButton" class="browser-style" type="button" disabled
+      data-message="accountData_resetButton"></button>
   </form>
-
-</body>

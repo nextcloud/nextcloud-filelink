@@ -5,9 +5,6 @@
   "extensionName": {
     "message": "FileLink Provider for Nextcloud"
   },
-  "serviceName": {
-    "message": "Nextcloud"
-  },
   "accountData_saveButton": {
     "message": "Save"
   },

@@ -1,0 +1,43 @@
+:root {
+    font: message-box;
+}
+
+body {
+    font-size: 1.1em;
+}
+
+ul {
+    list-style: none;
+    padding: 0;
+}
+
+h1 {
+    font-weight: 600;
+    font-size: 1.5em;
+    margin-top: 0;
+    margin-bottom: 0.5em;
+}
+
+h2 {
+    font-weight: 600;
+    font-size: 1.1em;
+    margin: 0.5em 0;
+}
+
+p {
+    margin: 0.5em 0;
+}
+
+input {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+#logo {
+    float: right;
+    height: 1.5em;
+}
+
+#provider-header {
+    border-bottom: 1px solid;
+}

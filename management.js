@@ -47,7 +47,7 @@ function activateSave() {
 
 browser.cloudFile.getAccount(accountId).then(
     theAccount => {
-        document.getElementById("serviceName").textContent = theAccount.name;
+        document.getElementById("provider-name").textContent = theAccount.name;
     });
 setStoredData(accountId);
 

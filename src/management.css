@@ -1,36 +1,19 @@
 :root {
     font: message-box;
-}
-
-body {
-    font-size: 1.1em;
-}
-
-ul {
-    list-style: none;
-    padding: 0;
-}
-
-h1 {
-    font-weight: 600;
-    font-size: 1.5em;
-    margin-top: 0;
-    margin-bottom: 0.5em;
+    font-size: 1em;
 }
 
 h2 {
-    font-weight: 600;
-    font-size: 1.1em;
-    margin: 0.5em 0;
-}
-
-p {
-    margin: 0.5em 0;
+    margin-top: 0;
+    margin-bottom: 0.2em;
 }
 
 input {
     width: 100%;
     box-sizing: border-box;
+    padding: 0.3em;
+    border: 0.5px solid;
+    margin: 0.1em 0 0.5em 0;
 }
 
 #logo {
@@ -38,6 +21,16 @@ input {
     height: 1.5em;
 }
 
-#provider-header {
+header {
     border-bottom: 1px solid;
+    margin-bottom: 1em;
 }
+
+button {
+    padding: 0.5em 5em;
+}
+
+#resetButton {
+    float: right;
+   }
+   

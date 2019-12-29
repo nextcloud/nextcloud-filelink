@@ -1,45 +1,33 @@
 <!DOCTYPE html>
-<html>
 
 <head>
   <meta charset="utf-8" />
-  <link rel="stylesheet" type="text/css" href="management.css" />
+  <title>Nextcloud</title>
+  <link rel="stylesheet" type="text/css" href="management.css">
   <script src="management.js" type="application/javascript" defer=""></script>
 </head>
 
 <body>
-  <div id="provider-header">
+  <header>
     <a id="service_url"><img id="logo" src="management.png" alt="Nextcloud logo" /></a>
-    <h1 id="provider-name"> </h1>
-  </div>
+    <h2 id="provider-name"> </h2>
+  </header>
+
   <form id="accountForm">
-    <ul>
-      <li>
-        <label>
-          <h2 data-message="serverUrl"> </h2>
-          <input id="serverUrl" type="url" required placeholder="https://example.com" />
-        </label>
-      </li>
-      <li>
-        <label>
-          <h2 for="username" data-message="accountData_user"> </h2>
-          <input id="username" type="text" required />
-        </label>
-      </li>
-      <li>
-        <label>
-          <h2 for="password" data-message="accountData_password"> </h2>
-          <input id="password" type="password" required />
-        </label>
-      </li>
-      <li>
-        <label>
-          <h2 for="storageFolder" data-message="accountData_folder"> </h2>
-          <input id="storageFolder" type="text" required value="/Mail-attachments" />
-        </label>
-      </li>
-    </ul>
-    <button id="saveButton" class="browser-style" type="button" disabled data-message="accountData_saveButton"></button>
-    <button id="resetButton" class="browser-style" type="reset" disabled
-      data-message="accountData_resetButton"></button>
+    <label for="serverUrl" data-message="serverUrl"></label>
+    <input id="serverUrl" type="url" required placeholder="https://example.com" />
+
+    <label for="username" data-message="username"> </label>
+    <input id="username" type="text" required />
+
+    <label for="password" data-message="password"></label>
+    <input id="password" type="password" required />
+
+    <label for="storageFolder" data-message="storageFolder"> </label>
+    <input id="storageFolder" type="text" required value="/Mail-attachments" />
+
+    <button id="saveButton" type="button" disabled data-message="saveButton"></button>
+
+    <button id="resetButton" type="reset" disabled data-message="resetButton"></button>
   </form>
+</body>

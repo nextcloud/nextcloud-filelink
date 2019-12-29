@@ -2,22 +2,22 @@
   "extensionDescription": {
     "message": "Lade große Anhänge in deine Nextcloud, statt sie per Mail zu senden"
   },
-  "accountData_saveButton": {
+  "saveButton": {
     "message": "Sichern"
   },
-  "accountData_resetButton": {
-    "message": "Zurück"
+  "resetButton": {
+    "message": "Zurücksetzen"
   },
   "serverUrl": {
     "message": "Server-URL"
   },
-  "accountData_user": {
+  "username": {
     "message": "Username"
   },
-  "accountData_password": {
+  "password": {
     "message": "App-Token oder Passwort"
   },
-  "accountData_folder": {
+  "storageFolder": {
     "message": "Speicherpfad in Nextcloud"
   }
 }

@@ -5,22 +5,22 @@
   "extensionName": {
     "message": "FileLink Provider for Nextcloud"
   },
-  "accountData_saveButton": {
+  "saveButton": {
     "message": "Save"
   },
-  "accountData_resetButton": {
+  "resetButton": {
     "message": "Reset"
   },
   "serverUrl": {
     "message": "Server URL"
   },
-  "accountData_user": {
+  "username": {
     "message": "Username"
   },
-  "accountData_password": {
+  "password": {
     "message": "Password or app token"
   },
-  "accountData_folder": {
+  "storageFolder": {
     "message": "Storage path in Nextcloud"
   }
 }

@@ -31,9 +31,65 @@ browser.cloudFile.onAccountDeleted.addListener(async accountId => {
     browser.storage.local.remove([accountId]);
 });
 
-browser.cloudFile.onFileUpload.addListener(async (account, { id, name, data }) => {
+async function createOneFolder(accountData, folder) {
+    let authHeader = "Basic " + btoa(accountData.username + ':' + accountData.password);
 
+    // URL of the folder to create
+    let url = accountData.serverUrl;
+    url += webDavUrl;
+    url += accountData.username;
+    url += encodePath(folder);
+
+    let headers = {
+        "Authorization": authHeader
+    };
+
+    // Try to create the folder
+    let fetchInfo = {
+        method: "MKCOL",
+        headers,
+    };
+
+    let response = await fetch(url, fetchInfo);
+    return response.status;
+}
+
+async function recursivelyCreateFolder(accountData, folder) {
+    // Looks clumsy, but *always* make sure recursion ends
+    if (folder == "/") {
+        return false
+    } else {
+        switch (await createOneFolder(accountData, folder)) {
+            case 405: // Already exists
+            case 201: // Created successfully
+                return true;
+                break;
+            case 409: // Intermediate folder missing
+                // Try to make parent folder
+                if (await recursivelyCreateFolder(accountData, folder.split("/").slice(0, -1).join("/"))) {
+                    // Try again
+                    if (201 == await createOneFolder(accountData, folder)) {
+                        return true
+                    }
+                }
+                break;
+        }
+    }
+    return false;
+}
+
+browser.cloudFile.onFileUpload.addListener(async (account, { id, name, data }) => {
     let accountInfo = await browser.storage.local.get(account.id);
+    if (!accountInfo || !(account.id in accountInfo)) {
+        throw new Error("Upload failed: No account data");
+    };
+
+    // Make sure storageFolder exists
+    // Creation implicitly checks for existance of foder, so the extra webservice call for checking first isn't necessary.
+    let foldersOK = await recursivelyCreateFolder(accountInfo[account.id], accountInfo[account.id].storageFolder);
+    if (!foldersOK) {
+        throw new Error("Upload failed: Can't create folder");
+    }
 
     let uploadInfo = {
         name,
@@ -44,31 +100,17 @@ browser.cloudFile.onFileUpload.addListener(async (account, { id, name, data }) =
     // Combine some things we will be needing
     let authHeader = "Basic " + btoa(accountInfo[account.id].username + ':' + accountInfo[account.id].password);
 
-    // URL of the folder to create
-    let url = accountInfo[account.id].serverUrl;
-    url += webDavUrl;
-    url += accountInfo[account.id].username;
-    url += encodePath(accountInfo[account.id].storageFolder);
-
     let headers = {
         // Content-Type is not yet necessary, but we will use the same headers for upload
         "Content-Type": "application/octet-stream",
         "Authorization": authHeader
     };
 
-    // Try to create the folder
-    let fetchInfo = {
-        method: "MKCOL",
-        headers,
-        signal: uploadInfo.abortController.signal,
-    };
-    /* Ignore any errors, because:
-        if the folder exists, we are fine anyway
-        if creation fails for another reason, the upload will fail too and we can handle the error then.
-    */
-    let response = await fetch(url, fetchInfo);
-
     //  Uplaod URL
+    let url = accountInfo[account.id].serverUrl;
+    url += webDavUrl;
+    url += accountInfo[account.id].username;
+    url += encodePath(accountInfo[account.id].storageFolder);
     url += '/' + encodePath(name);
 
     fetchInfo = {

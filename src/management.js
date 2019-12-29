@@ -6,11 +6,13 @@ let password = document.getElementById("password");
 let storageFolder = document.getElementById("storageFolder");
 let saveButton = document.getElementById("saveButton");
 let resetButton = document.getElementById("resetButton");
+let service_url = document.querySelector("#service_url");
 
 (() => {
     for (let element of document.querySelectorAll("[data-message]")) {
         element.textContent = browser.i18n.getMessage(element.dataset.message);
-    }
+    };
+    service_url.setAttribute("href", browser.runtime.getManifest().cloud_file.service_url);
 })();
 
 browser.cloudFile.getAccount(accountId).then(

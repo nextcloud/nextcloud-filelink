@@ -14,14 +14,16 @@ browser.storage.local.get().then(
     }
 );
 
-/** encodeURIComponent does not encode every char that needs it */
-function wwwFormUrlEncode(aStr) {
+/** encodeURIComponent does not encode every char that needs it, but / must not be encoded */
+function encodePath(aStr) {
     return encodeURIComponent(aStr)
         .replace(/!/g, '%21')
         .replace(/'/g, '%27')
         .replace(/\(/g, '%28')
         .replace(/\)/g, '%29')
-        .replace(/\*/g, '%2A');
+        .replace(/\*/g, '%2A')
+        .replace(/%2F/gi, '/')
+        ;
 }
 
 /* If an account is removed also remove its stored data */
@@ -46,7 +48,7 @@ browser.cloudFile.onFileUpload.addListener(async (account, { id, name, data }) =
     let url = accountInfo[account.id].serverUrl;
     url += webDavUrl;
     url += accountInfo[account.id].username;
-    url += accountInfo[account.id].storageFolder;
+    url += encodePath(accountInfo[account.id].storageFolder);
 
     let headers = {
         // Content-Type is not yet necessary, but we will use the same headers for upload
@@ -67,7 +69,7 @@ browser.cloudFile.onFileUpload.addListener(async (account, { id, name, data }) =
     let response = await fetch(url, fetchInfo);
 
     //  Uplaod URL
-    url += '/' + wwwFormUrlEncode(name);
+    url += '/' + encodePath(name);
 
     fetchInfo = {
         method: "PUT",
@@ -84,7 +86,7 @@ browser.cloudFile.onFileUpload.addListener(async (account, { id, name, data }) =
     }
 
     // Create share link
-    let shareFormData = "path=" + wwwFormUrlEncode(accountInfo[account.id].storageFolder + "/" + name);
+    let shareFormData = "path=" + encodePath(accountInfo[account.id].storageFolder + "/" + name);
     shareFormData += "&shareType=3"; // 3 == public share
 
     url = accountInfo[account.id].serverUrl + shareApiUrl + "?format=json";
@@ -134,8 +136,8 @@ browser.cloudFile.onFileDeleted.addListener(async (account, id) => {
     let url = accountInfo[account.id].serverUrl;
     url += webDavUrl;
     url += accountInfo[account.id].username;
-    url += accountInfo[account.id].storageFolder;
-    url += '/' + wwwFormUrlEncode(uploadInfo.name);
+    url += encodePath(accountInfo[account.id].storageFolder);
+    url += '/' + encodePath(uploadInfo.name);
 
     let headers = {
         "Authorization": authHeader

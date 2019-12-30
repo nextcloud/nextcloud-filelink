@@ -39,6 +39,18 @@ label {
     float: left;
 }
 
+.checkboxWithLabel {
+    float: left;
+}
+
+.checkboxWithLabel label {
+    float: initial;
+}
+
+.checkboxWithLabel input {
+    width: initial;
+}
+
 details p {
     font-size: smaller;
     background: white;

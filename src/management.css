@@ -16,6 +16,10 @@ input {
     margin: 0.1em 0 0.5em 0;
 }
 
+meter {
+    width: 100%;
+}
+
 #logo {
     float: right;
     height: 1.5em;
@@ -32,5 +36,18 @@ button {
 
 #resetButton {
     float: right;
-   }
-   
+}
+
+#freespaceGauge {
+    margin-bottom: .5em;
+}
+
+#freespacelabel {
+    float: left;
+    margin-right: .5em;
+}
+
+#meterspan {
+    display: block;
+    overflow: hidden;
+}

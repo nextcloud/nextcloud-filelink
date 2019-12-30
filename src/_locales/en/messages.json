@@ -22,5 +22,16 @@
   },
   "storageFolder": {
     "message": "Storage path in Nextcloud"
+  },
+  "freespace": {
+    "message": "Free Space ($FREE$ of $FULL$)",
+    "placeholders": {
+      "free": {
+        "content": "$1"
+      },
+      "full": {
+        "content": "$2"
+      }
+    }
   }
 }

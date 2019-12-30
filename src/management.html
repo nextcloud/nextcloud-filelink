@@ -11,6 +11,13 @@
   <header>
     <a id="service_url"><img id="logo" src="management.png" alt="Nextcloud logo" /></a>
     <h2 id="provider-name"> </h2>
+    <div id="freespaceGauge" hidden>
+      <label id="freespacelabel" for="freespace" data-message="freespace"></label>
+      <span id="meterspan">
+        <meter id="freespace" min="0" max="-2" value="-1">
+        </meter>
+      </span>
+    </div>
   </header>
 
   <form id="accountForm">

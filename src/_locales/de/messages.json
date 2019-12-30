@@ -39,7 +39,7 @@
     "message": "Downloads mit Passwort sichern:"
   },
   "useDlPassword_details": {
-    "message": "ACHTUNG! Dieses Passwort muss den Riechtlinien entsprechen, die der Admin deiner Nextcloud aufgestellt hat (Länge, Zeichen, Ziffern, ...), sonst schlägt der Upload fehl. Das Passwort musst du den Empfängern deiner Anhänge gesondert mitteilen, da sie es für den Download benötigen."
+    "message": "ACHTUNG! Dieses Passwort muss den Richtlinien entsprechen, die der Admin deiner Nextcloud aufgestellt hat (Länge, Zeichen, Ziffern, ...), sonst schlägt der Upload fehl. Das Passwort musst du den Empfängern deiner Anhänge gesondert mitteilen, da sie es für den Download benötigen."
   },
   "freespace": {
     "message": "Freier Speicher: $FREE$ GB von $FULL$ GB",

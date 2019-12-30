@@ -7,6 +7,8 @@ let storageFolder = document.querySelector("#storageFolder");
 let saveButton = document.querySelector("#saveButton");
 let resetButton = document.querySelector("#resetButton");
 let service_url = document.querySelector("#service_url");
+let useDlPassword = document.querySelector("#useDlPassword");
+let downloadPassword = document.querySelector("#downloadPassword");
 
 (() => {
     // Add localized strings
@@ -44,22 +46,21 @@ let service_url = document.querySelector("#service_url");
 })();
 
 async function setStoredData() {
+    useDlPassword.checked = false;
+    downloadPassword.disabled = true;
+    downloadPassword.required = false;
+
     accountInfo = await browser.storage.local.get([accountId]);
     if (accountId in accountInfo) {
-        // Disable input while handling it
-        for (let element of document.querySelectorAll("input")) {
-            element.disabled = true;
-        };
         for (const key in accountInfo[accountId]) {
             let element = document.getElementById(key);
             if (element && accountInfo[accountId].hasOwnProperty(key)) {
                 element.value = accountInfo[accountId][key];
             }
-        }
-        // Disable input while handling it
-        for (let element of document.querySelectorAll("input")) {
-            element.disabled = false;
         };
+        useDlPassword.checked = accountInfo[accountId].useDlPassword;
+        downloadPassword.disabled = !useDlPassword.checked;
+        downloadPassword.required = useDlPassword.checked;
     }
 }
 
@@ -71,6 +72,12 @@ function activateSave() {
         saveButton.disabled = true;
     };
     resetButton.disabled = false;
+}
+
+useDlPassword.onclick = async () => {
+    downloadPassword.disabled = !useDlPassword.checked;
+    downloadPassword.required = !downloadPassword.disabled;
+    accountForm.checkValidity();
 }
 
 /** Handler for Cancel button, restores saved values */
@@ -86,7 +93,6 @@ saveButton.onclick = async () => {
 
     // Sanitize input
     for (let element of document.querySelectorAll("input")) {
-        element.disabled = true;
         element.value = element.value.trim();
     };
     serverUrl.value = serverUrl.value.replace(/\/+$/, "");
@@ -97,14 +103,16 @@ saveButton.onclick = async () => {
     }
 
     // Store account data
-    let start = Date.now();
     await browser.storage.local.set({
+        // TODO fetch all input fields
         [accountId]:
         {
             serverUrl: serverUrl.value,
             username: username.value,
             password: password.value,
             storageFolder: storageFolder.value,
+            useDlPassword: useDlPassword.checked,
+            downloadPassword: downloadPassword.value,
         },
     });
     await browser.cloudFile.updateAccount(accountId, {
@@ -112,10 +120,4 @@ saveButton.onclick = async () => {
         // Default upload limit of Nextcloud
         uploadSizeLimit: 512 * 1024 * 1024,
     });
-    setTimeout(() => {
-        for (let element of document.querySelectorAll("input")) {
-            element.disabled = false;
-        };
-        saveButton.disabled = resetButton.disabled = true;
-    }, Math.max(0, start + 500 - Date.now()));
 };

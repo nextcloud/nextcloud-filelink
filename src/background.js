@@ -17,13 +17,10 @@ browser.storage.local.get().then(
 /** encodeURIComponent does not encode every char that needs it, but / must not be encoded */
 function encodePath(aStr) {
     return encodeURIComponent(aStr)
-        .replace(/!/g, '%21')
-        .replace(/'/g, '%27')
-        .replace(/\(/g, '%28')
-        .replace(/\)/g, '%29')
-        .replace(/\*/g, '%2A')
-        .replace(/%2F/gi, '/')
-        ;
+        .replace(/[!'()*]/g, c => {
+            return '%' + c.charCodeAt(0).toString(16).toUpperCase();
+        })
+        .replace(/%2F/gi, '/');
 }
 
 /* If an account is removed also remove its stored data */
@@ -121,11 +118,14 @@ browser.cloudFile.onFileUpload.addListener(async (account, { id, name, data }) =
     };
 
     response = await fetch(url, fetchInfo);
+    delete uploadInfo.abortController;
 
     if (!response.ok) {
         // Don't bother to translate, TB will use its own message anyway
         throw new Error("Upload failed:" + response.statusText);
     }
+
+    updateStorageInfo(account.id);
 
     // Create share link
     let shareFormData = "path=" + encodePath(accountInfo[account.id].storageFolder + "/" + name);
@@ -143,7 +143,6 @@ browser.cloudFile.onFileUpload.addListener(async (account, { id, name, data }) =
         method: "POST",
         headers,
         body: shareFormData,
-        signal: uploadInfo.abortController.signal,
     };
 
     response = await fetch(url, fetchInfo);
@@ -152,9 +151,6 @@ browser.cloudFile.onFileUpload.addListener(async (account, { id, name, data }) =
         // Don't bother to translate, TB will use its own message anyway
         throw new Error("Sharing failed:" + response.statusText);
     }
-
-    delete uploadInfo.abortController;
-    updateStorageInfo(account.id);
 
     let parsedResponse = await response.json();
 

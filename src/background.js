@@ -10,6 +10,7 @@ browser.storage.local.get().then(
     data => {
         for (const key in data) {
             browser.cloudFile.updateAccount(key, { configured: true });
+            updateStorageInfo( key);
         }
     }
 );
@@ -211,6 +212,7 @@ async function updateStorageInfo(accountId) {
     let url = accountInfo[accountId].serverUrl;
     url += userInfoUrl;
     url += accountInfo[accountId].username;
+    url += "?format=json"
 
     let headers = {
         "Authorization": authHeader,
@@ -223,6 +225,7 @@ async function updateStorageInfo(accountId) {
     };
 
     let response = await fetch(url, fetchInfo);
+
     if (response.ok) {
         let data = await response.json();
         let spaceRemaining = data.ocs.data.quota.free;

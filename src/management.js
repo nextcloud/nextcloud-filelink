@@ -15,9 +15,25 @@ let service_url = document.querySelector("#service_url");
     };
     // Add text from other sources
     service_url.setAttribute("href", browser.runtime.getManifest().cloud_file.service_url);
+
     browser.cloudFile.getAccount(accountId).then(
         theAccount => {
             document.querySelector("#provider-name").textContent = theAccount.name;
+            // Update the free space gauge
+            let free = theAccount.spaceRemaining;
+            let used = theAccount.spaceUsed;
+            if (free >= 0 && used >= 0) {
+                let full = (free + used) / (1024.0 * 1024.0 * 1024.0); // Convert bytes to gigabytes
+                free /= 1024.0 * 1024.0 * 1024.0;
+                document.querySelector("#freespacelabel").textContent = browser.i18n.getMessage("freespace", [
+                    free > 100 ? free.toFixed() : free.toPrecision(2),
+                    full > 100 ? full.toFixed() : full.toPrecision(2)]);
+                let meter = document.querySelector("#freespace");
+                meter.max = full;
+                meter.value = free;
+                meter.low = full / 20;
+                document.querySelector("#freespaceGauge").hidden = false;
+            }
         });
     // Make form active
     for (const inp of document.querySelectorAll("input")) {

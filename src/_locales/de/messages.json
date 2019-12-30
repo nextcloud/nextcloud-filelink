@@ -19,5 +19,16 @@
   },
   "storageFolder": {
     "message": "Speicherpfad in Nextcloud"
+  },
+  "freespace": {
+    "message": "Freier Speicher: $FREE$ GB von $FULL$ GB",
+    "placeholders": {
+      "free": {
+        "content": "$1"
+      },
+      "full": {
+        "content": "$2"
+      }
+    }
   }
 }

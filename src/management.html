@@ -9,7 +9,7 @@
 
 <body>
   <header>
-    <a id="service_url"><img id="logo" src="management.png" alt="Nextcloud logo" /></a>
+    <a id="service_url" tabindex="-1"><img id="logo" src="management.png" alt="Nextcloud logo" /></a>
     <h2 id="provider-name"> </h2>
     <div id="freespaceGauge" hidden>
       <label id="freespacelabel" for="freespace" data-message="freespace"></label>
@@ -24,52 +24,52 @@
     <div class="fullfield">
       <label for="serverUrl" data-message="serverUrl"></label>
       <details>
-        <summary data-message="detailSummary"></summary>
+        <summary tabindex="-1" data-message="detailSummary"></summary>
         <p data-message="serverUrl_details"></p>
       </details>
-      <input id="serverUrl" type="url" required placeholder="https://example.com" />
+      <input id="serverUrl" type="url" required tabindex="1" placeholder="https://example.com" />
     </div>
 
     <div class="fullfield">
       <label for="username" data-message="username"> </label>
       <details>
-        <summary data-message="detailSummary"></summary>
+        <summary tabindex="-1" data-message="detailSummary"></summary>
         <p data-message="username_details"></p>
       </details>
-      <input id="username" type="text" required />
+      <input id="username" type="text" required tabindex="1"/>
     </div>
 
     <div class="fullfield">
       <label for="password" data-message="password"></label>
       <details>
-        <summary data-message="detailSummary"></summary>
+        <summary tabindex="-1" data-message="detailSummary"></summary>
         <p data-message="password_details"></p>
       </details>
-      <input id="password" type="password" required />
+      <input id="password" type="password" required tabindex="1"/>
     </div>
 
     <div class="fullfield">
       <label for="storageFolder" data-message="storageFolder"> </label>
       <details>
-        <summary data-message="detailSummary"></summary>
+        <summary tabindex="-1" data-message="detailSummary"></summary>
         <p data-message="storageFolder_details"></p>
       </details>
-      <input id="storageFolder" type="text" required value="/Mail-attachments" />
+      <input id="storageFolder" type="text" required tabindex="1" value="/Mail-attachments" />
     </div>
 
     <div class="fullfield">
       <span class="checkboxWithLabel">
-        <input id="useDlPassword" type="checkbox" />
+        <input id="useDlPassword" type="checkbox" tabindex="1"/>
         <label for="useDlPassword" data-message="useDlPassword"> </label>
       </span>
       <details>
-        <summary data-message="detailSummary"></summary>
+        <summary tabindex="-1" data-message="detailSummary"></summary>
         <p data-message="useDlPassword_details"></p>
       </details>
-      <input id="downloadPassword" class="subinput" type="text" disabled />
+      <input id="downloadPassword" class="subinput" type="text" disabled tabindex="1"/>
     </div>
 
-    <button id="saveButton" type="button" disabled data-message="saveButton"></button>
-    <button id="resetButton" type="reset" disabled data-message="resetButton"></button>
+    <button id="saveButton" type="button" disabled tabindex="1" data-message="saveButton"></button>
+    <button id="resetButton" type="reset" disabled tabindex="1"data-message="resetButton"></button>
   </form>
 </body>

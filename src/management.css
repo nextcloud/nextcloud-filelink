@@ -30,6 +30,33 @@ header {
     margin-bottom: 1em;
 }
 
+label {
+    float: left;
+}
+
+details p {
+    font-size: smaller;
+    background: white;
+    border: 1px solid;
+    padding: .5em;
+    width: 50%;
+    position: absolute;
+    z-index: 1;
+    right: 0.2em;
+    top: 0.5em;
+}
+
+details summary {
+    float: right;
+    margin-right: 0.2em;
+}
+
+.fullfield {
+    width: 100%;
+    position: relative;
+    display: inline-block;
+}
+
 button {
     padding: 0.5em 5em;
 }

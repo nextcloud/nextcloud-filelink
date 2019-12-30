@@ -21,17 +21,41 @@
   </header>
 
   <form id="accountForm">
-    <label for="serverUrl" data-message="serverUrl"></label>
-    <input id="serverUrl" type="url" required placeholder="https://example.com" />
+    <div class="fullfield">
+      <label for="serverUrl" data-message="serverUrl"></label>
+      <details>
+        <summary data-message="detailSummary"></summary>
+        <p data-message="serverUrl_details"></p>
+      </details>
+      <input id="serverUrl" type="url" required placeholder="https://example.com" />
+    </div>
 
-    <label for="username" data-message="username"> </label>
-    <input id="username" type="text" required />
+    <div class="fullfield">
+      <label for="username" data-message="username"> </label>
+      <details>
+        <summary data-message="detailSummary"></summary>
+        <p data-message="username_details"></p>
+      </details>
+      <input id="username" type="text" required />
+    </div>
 
-    <label for="password" data-message="password"></label>
-    <input id="password" type="password" required />
+    <div class="fullfield">
+      <label for="password" data-message="password"></label>
+      <details>
+        <summary data-message="detailSummary"></summary>
+        <p data-message="password_details"></p>
+      </details>
+      <input id="password" type="password" required />
+    </div>
 
-    <label for="storageFolder" data-message="storageFolder"> </label>
-    <input id="storageFolder" type="text" required value="/Mail-attachments" />
+    <div class="fullfield">
+      <label for="storageFolder" data-message="storageFolder"> </label>
+      <details>
+        <summary data-message="detailSummary"></summary>
+        <p data-message="storageFolder_details"></p>
+      </details>
+      <input id="storageFolder" type="text" required value="/Mail-attachments" />
+    </div>
 
     <button id="saveButton" type="button" disabled data-message="saveButton"></button>
 

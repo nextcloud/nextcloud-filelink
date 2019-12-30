@@ -11,17 +11,32 @@
   "resetButton": {
     "message": "Reset"
   },
+  "detailSummary": {
+    "message": "Help"
+  },
   "serverUrl": {
     "message": "Server URL"
+  },
+  "serverUrl_details": {
+    "message": "The base URL of the Nextcloud server; if your server runs on a non-standard port, put it into the URL."
   },
   "username": {
     "message": "Username"
   },
+  "username_details": {
+    "message": "Your username on your Nextcloud server"
+  },
   "password": {
-    "message": "Password or app token"
+    "message": "App token or password"
+  },
+  "password_details": {
+    "message": "An app token (preferrable) or password. Generate an app token on your Nextcloud via Settings -> Security -> App Token."
   },
   "storageFolder": {
     "message": "Storage path in Nextcloud"
+  },
+  "storageFolder_details": {
+    "message": "The path where the files are stored in your Nextcloud (must begin with a '/')"
   },
   "freespace": {
     "message": "Free Space ($FREE$ of $FULL$)",

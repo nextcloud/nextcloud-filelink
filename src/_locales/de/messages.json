@@ -32,6 +32,8 @@
   "storageFolder": {
     "message": "Speicherpfad in Nextcloud"
   },
+  "useDlPassword": {
+    "message": "Downloads mit Passwort sichern:"
   "storageFolder_details": {
     "message": "Das Verzeichnis, in dem die Dateien abegelgt werden. Falls es nicht exisitert, wird es automatisch angelegt."
   },

@@ -3,6 +3,11 @@
     font-size: 1em;
 }
 
+header {
+    border-bottom: 1px solid;
+    margin-bottom: 1em;
+}
+
 h2 {
     margin-top: 0;
     margin-bottom: 0.2em;
@@ -13,7 +18,7 @@ input {
     box-sizing: border-box;
     padding: 0.3em;
     border: 0.5px solid;
-    margin: 0.1em 0 0.5em 0;
+    margin: 0.1em 0 0.7em 0;
 }
 
 meter {
@@ -25,9 +30,9 @@ meter {
     height: 1.5em;
 }
 
-header {
-    border-bottom: 1px solid;
-    margin-bottom: 1em;
+input[type=checkbox] {
+    width: unset;
+    margin-right: 0.1em;
 }
 
 label {
@@ -58,7 +63,13 @@ details summary {
 }
 
 button {
+    margin-top: 0.7em;
     padding: 0.5em 5em;
+}
+
+#logo {
+    float: right;
+    height: 1.5em;
 }
 
 #resetButton {

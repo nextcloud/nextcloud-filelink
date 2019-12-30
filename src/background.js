@@ -132,6 +132,10 @@ browser.cloudFile.onFileUpload.addListener(async (account, { id, name, data }) =
     let shareFormData = "path=" + encodePath(accountInfo[account.id].storageFolder + "/" + name);
     shareFormData += "&shareType=3"; // 3 == public share
 
+    if (accountInfo[account.id].useDlPassword) {
+        shareFormData += "&password=" + encodeURIComponent(accountInfo[account.id].downloadPassword)
+    }
+
     url = accountInfo[account.id].serverUrl + shareApiUrl + "?format=json";
 
     headers = {

@@ -10,7 +10,7 @@ browser.storage.local.get().then(
     data => {
         for (const key in data) {
             browser.cloudFile.updateAccount(key, { configured: true });
-            updateStorageInfo( key);
+            updateStorageInfo(key);
         }
     }
 );
@@ -83,7 +83,7 @@ browser.cloudFile.onFileUpload.addListener(async (account, { id, name, data }) =
     };
 
     // Make sure storageFolder exists
-    // Creation implicitly checks for existance of foder, so the extra webservice call for checking first isn't necessary.
+    // Creation implicitly checks for existence of folder, so the extra webservice call for checking first isn't necessary.
     let foldersOK = await recursivelyCreateFolder(accountInfo[account.id], accountInfo[account.id].storageFolder);
     if (!foldersOK) {
         throw new Error("Upload failed: Can't create folder");
@@ -104,7 +104,7 @@ browser.cloudFile.onFileUpload.addListener(async (account, { id, name, data }) =
         "Authorization": authHeader
     };
 
-    //  Uplaod URL
+    //  Upload URL
     let url = accountInfo[account.id].serverUrl;
     url += webDavUrl;
     url += accountInfo[account.id].username;

@@ -104,7 +104,6 @@ saveButton.onclick = async () => {
 
     // Store account data
     await browser.storage.local.set({
-        // TODO fetch all input fields
         [accountId]:
         {
             serverUrl: serverUrl.value,

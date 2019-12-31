@@ -30,7 +30,7 @@
     "message": "App token or password"
   },
   "password_details": {
-    "message": "An app token (preferrable) or password. Generate an app token on your Nextcloud via Settings -> Security -> App Token."
+    "message": "An app token (preferable) or password. Generate an app token on your Nextcloud via Settings -> Security -> App Token."
   },
   "storageFolder": {
     "message": "Storage path in Nextcloud"
@@ -42,7 +42,7 @@
     "message": "Password protect downloads:"
   },
   "useDlPassword_details": {
-    "message": "Caution! This password has to comply to the rules the admin of your NExtcloud enforces (eg. elngth, character ste, ...). Otherwise the upload will fail. Tell the password to the recipients; they will need it to download the attachment."
+    "message": "Caution! This password has to comply to the rules the admin of your NExtcloud enforces (eg. length, character ste, ...). Otherwise the upload will fail. Tell the password to the recipients; they will need it to download the attachment."
   },
   "freespace": {
     "message": "Free Space ($FREE$ of $FULL$)",

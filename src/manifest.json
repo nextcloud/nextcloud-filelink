@@ -10,9 +10,9 @@
     "description": "__MSG_extensionDescription__",
     "homepage_url": "https://gitlab.com/joendres/nextcloud-filelink2",
     "author": "Johannes Endres",
-    "version": "2.0",
+    "version": "2.0.0",
     "icons": {
-        "64": "icon64.png"
+        "128": "icon64.png"
     },
     "background": {
         "scripts": [

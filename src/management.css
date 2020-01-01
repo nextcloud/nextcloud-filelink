@@ -3,6 +3,10 @@
     font-size: 1em;
 }
 
+body.busy * {
+    cursor: progress;
+}
+
 header {
     border-bottom: 1px solid;
     margin-bottom: 1em;

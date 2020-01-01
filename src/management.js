@@ -11,6 +11,9 @@ let useDlPassword = document.querySelector("#useDlPassword");
 let downloadPassword = document.querySelector("#downloadPassword");
 
 (() => {
+    // Fill in form fields
+    setStoredData();
+
     // Add localized strings
     for (let element of document.querySelectorAll("[data-message]")) {
         element.textContent = browser.i18n.getMessage(element.dataset.message);
@@ -41,24 +44,23 @@ let downloadPassword = document.querySelector("#downloadPassword");
     for (const inp of document.querySelectorAll("input")) {
         inp.oninput = activateSave;
     }
-    // Fill in form fields
-    setStoredData();
 })();
 
 async function setStoredData() {
-    useDlPassword.checked = false;
     downloadPassword.disabled = true;
     downloadPassword.required = false;
 
-    accountInfo = await browser.storage.local.get([accountId]);
+    const accountInfo = await browser.storage.local.get([accountId]);
     if (accountId in accountInfo) {
         for (const key in accountInfo[accountId]) {
             let element = document.getElementById(key);
             if (element && accountInfo[accountId].hasOwnProperty(key)) {
                 element.value = accountInfo[accountId][key];
+                element.dataset.stored = accountInfo[accountId][key];
             }
         };
         useDlPassword.checked = accountInfo[accountId].useDlPassword;
+        useDlPassword.dataset.stored = accountInfo[accountId].useDlPassword;
         downloadPassword.disabled = !useDlPassword.checked;
         downloadPassword.required = useDlPassword.checked;
     }
@@ -84,12 +86,50 @@ useDlPassword.onclick = async () => {
 resetButton.onclick = async () => {
     setStoredData();
     resetButton.disabled = saveButton.disabled = true;
+};
+
+/** Convert the given password into an app password */
+async function convertPassword() {
+    let retval = {
+        password: password.value,
+        loginOk: false,
+    };
+
+    const url = serverUrl.value + "/ocs/v2.php/core/getapppassword?format=json";
+
+    const headers = {
+        "Authorization": "Basic " + btoa(username.value + ':' + password.value),
+        "OCS-APIRequest": "true",
+        "User-Agent": "Filelink for Nextcloud",
+    };
+
+    const fetchInfo = {
+        method: "GET",
+        headers,
+    };
+
+    const response = await fetch(url, fetchInfo);
+    const ocsData = (await response.json()).ocs.data;
+    if (response.status == 200 && ocsData.apppassword) {
+        retval.password = ocsData.apppassword;
+        retval.loginOk = true;
+    } else if (response.status == 403) {
+        // It's aready a valid token, don't change
+        retval.loginOk = true;
+    };
+
+    return retval;
 }
 
 /** Handler for Save button */
 saveButton.onclick = async () => {
-
+    document.getElementById("provider-management").classList.add('busy');
     saveButton.disabled = resetButton.disabled = true;
+    let states = {};
+    for (let element of document.querySelectorAll("input")) {
+        states[element.id] = element.disabled;
+        element.disabled = true;
+    };
 
     // Sanitize input
     for (let element of document.querySelectorAll("input")) {
@@ -102,6 +142,9 @@ saveButton.onclick = async () => {
         storageFolder.value = "/" + storageFolder.value;
     }
 
+    if (password.value != password.dataset.stored) {
+        password.value = (await convertPassword()).password;
+    }
     // Store account data
     await browser.storage.local.set({
         [accountId]:
@@ -119,4 +162,9 @@ saveButton.onclick = async () => {
         // Default upload limit of Nextcloud
         uploadSizeLimit: 512 * 1024 * 1024,
     });
+
+    for (let elementId in states) {
+        document.getElementById(elementId).disabled = states[elementId];
+    };
+    document.getElementById("provider-management").classList.remove('busy');
 };

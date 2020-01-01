@@ -7,7 +7,7 @@
   <script src="management.js" type="application/javascript" defer=""></script>
 </head>
 
-<body>
+<body id="provider-management">
   <header>
     <a id="service_url" tabindex="-1"><img id="logo" src="management.png" alt="Nextcloud logo" /></a>
     <h2 id="provider-name"> </h2>
@@ -27,7 +27,7 @@
         <summary tabindex="-1" data-message="detailSummary"></summary>
         <p data-message="serverUrl_details"></p>
       </details>
-      <input id="serverUrl" type="url" required tabindex="1" placeholder="https://example.com" />
+      <input id="serverUrl" type="url" required tabindex="1" placeholder="https://example.com" data-stored=""/>
     </div>
 
     <div class="fullfield">
@@ -36,7 +36,7 @@
         <summary tabindex="-1" data-message="detailSummary"></summary>
         <p data-message="username_details"></p>
       </details>
-      <input id="username" type="text" required tabindex="1" />
+      <input id="username" type="text" required tabindex="1" data-stored=""/>
     </div>
 
     <div class="fullfield">
@@ -45,7 +45,7 @@
         <summary tabindex="-1" data-message="detailSummary"></summary>
         <p data-message="password_details"></p>
       </details>
-      <input id="password" type="password" required tabindex="1" />
+      <input id="password" type="password" required tabindex="1" data-stored=""/>
     </div>
 
     <div class="fullfield">
@@ -54,19 +54,19 @@
         <summary tabindex="-1" data-message="detailSummary"></summary>
         <p data-message="storageFolder_details"></p>
       </details>
-      <input id="storageFolder" type="text" required tabindex="1" value="/Mail-attachments" />
+      <input id="storageFolder" type="text" required tabindex="1" value="/Mail-attachments" data-stored="/Mail-attachments"/>
     </div>
 
     <div class="fullfield">
       <span class="checkboxWithLabel">
-        <input id="useDlPassword" type="checkbox" tabindex="1" />
+        <input id="useDlPassword" type="checkbox" tabindex="1" data-stored=""/>
         <label for="useDlPassword" data-message="useDlPassword"> </label>
       </span>
       <details>
         <summary tabindex="-1" data-message="detailSummary"></summary>
         <p data-message="useDlPassword_details"></p>
       </details>
-      <input id="downloadPassword" class="subinput" type="text" disabled tabindex="1" />
+      <input id="downloadPassword" class="subinput" type="text" disabled tabindex="1" data-stored=""/>
     </div>
 
     <button id="saveButton" type="button" disabled tabindex="1" data-message="saveButton"></button>

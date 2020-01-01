@@ -24,8 +24,25 @@ function encodePath(aStr) {
         .replace(/%2F/gi, '/');
 }
 
-/* If an account is removed also remove its stored data */
+/* If an account is removed also remove its stored data and the app token */
 browser.cloudFile.onAccountDeleted.addListener(async accountId => {
+    let accountInfo = await browser.storage.local.get(accountId);
+    if (accountInfo && accountId in accountInfo) {
+        accountData = accountInfo[accountId];
+        let authHeader = "Basic " + btoa(accountData.username + ':' + accountData.password);
+        let url = accountData.serverUrl + "/ocs/v2.php/core/apppassword?format=json";
+        let headers = {
+            "Authorization": authHeader,
+            "OCS-APIREQUEST": "true",
+        };
+        let fetchInfo = {
+            method: "DELETE",
+            headers,
+        };
+        // Just try and ignore the results
+        fetch(url, fetchInfo);
+    };
+
     browser.storage.local.remove([accountId]);
 });
 

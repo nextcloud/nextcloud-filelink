@@ -114,7 +114,7 @@ async function convertPassword() {
         retval.password = ocsData.apppassword;
         retval.loginOk = true;
     } else if (response.status == 403) {
-        // It's aready a valid token, don't change
+        // It's already a valid token, don't change
         retval.loginOk = true;
     };
 

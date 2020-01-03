@@ -113,11 +113,6 @@ resetButton.onclick = async () => {
 
 /** Convert the given password into an app password */
 async function convertPassword() {
-    let retval = {
-        password: password.value,
-        loginOk: false,
-    };
-
     const url = serverUrl.value + "/ocs/v2.php/core/getapppassword?format=json";
 
     const headers = {
@@ -125,23 +120,26 @@ async function convertPassword() {
         "OCS-APIRequest": "true",
         "User-Agent": "Filelink for Nextcloud",
     };
-
+    
     const fetchInfo = {
         method: "GET",
         headers,
     };
 
-    const response = await fetch(url, fetchInfo);
-    const ocsData = (await response.json()).ocs.data;
-    if (response.status == 200 && ocsData.apppassword) {
-        retval.password = ocsData.apppassword;
-        retval.loginOk = true;
-    } else if (response.status == 403) {
-        // It's already a valid token, don't change
-        retval.loginOk = true;
-    };
-
-    return retval;
+    return Promise.race([
+        fetch(url, fetchInfo),
+        new Promise(function (resolve, reject) {
+            setTimeout(() => reject(), 2000); // Two seconds
+        })
+    ]).then(
+        // response from fetch, parse its body
+        response => response.json(),
+        // timeout, just pass on empty object
+        () => { })
+        .then(
+            // If the json contained a usable answer, return it, otherwise leave unchanged
+            parsed => (parsed && parsed.ocs && parsed.ocs.data && parsed.ocs.data.apppassword) ?
+            parsed.ocs.data.apppassword : password.value);
 }
 
 /** Handler for Save button */
@@ -166,8 +164,9 @@ saveButton.onclick = async () => {
     }
 
     if (password.value != password.dataset.stored) {
-        password.value = (await convertPassword()).password;
+        password.value = await convertPassword();
     }
+
     // Store account data
     await browser.storage.local.set({
         [accountId]:

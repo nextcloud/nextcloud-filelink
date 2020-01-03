@@ -32,7 +32,7 @@ _Summary:_ Letting the Add-On get an a app token is more convenient, but may fai
 
 ### Upload problems
 
-If all uploads fail, it's usually a problem with the settings, either in Thunderbird (doublecheck everything in Settings -> Prefrences -> Attachments) or in your Nextcloud (point your admin to the [Admin guide](#nextcloud-admin-guide)).
+If all uploads fail, it's usually a problem with the settings, either in Thunderbird (doublecheck everything in Settings -> Preferences -> Attachments) or in your Nextcloud (point your admin to the [Admin guide](#nextcloud-admin-guide)).
 
 If the Add-On still fails, please check if it's a known ~Bug. Feel free to open a new issue otherwise.
 

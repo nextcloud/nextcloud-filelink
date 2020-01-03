@@ -2,19 +2,22 @@
 
 A MailExtension für Thunderbird (68+) that uploads large attachments to your Nextcloud instead of sending them by email.
 
-Infomation for
+Information for
 
 * [Users](#user-guide)
-* [Admins](#admin-guide)
+* [Admins](#nextcloud-admin-guide)
 * [Developers](#developer-guide)
+
+## Requirements
+
+* Nextcloud: 16 or newer (older versions might work, but are [not supported by Nextcloud](https://github.com/nextcloud/server/wiki/Maintenance-and-Release-Schedule))
+* Thunderbird: 68+ (60.4 ESR might work too, but has not been tested)
 
 ## User guide
 
 ### Installation
 
-FileLink Provider for Nextcloud will shortly be available from https://addons.thunderbird.net/de/thunderbird/. Until then download the [XPI file](raw/master/web-ext-artifacts/filelink_provider_for_nextcloud-2.0.0.xpi) and install it manually.
-
-### Account settings
+FileLink Provider for Nextcloud will shortly be available from https://addons.thunderbird.net/de/thunderbird/. Until then download the [XPI file](https://gitlab.com/joendres/filelink-nextcloud/raw/master/web-ext-artifacts/filelink_provider_for_nextcloud-2.0.0.xpi) and install it manually.
 
 ### Password vs. App Token
 
@@ -27,9 +30,23 @@ FileLink Provider for Nextcloud tries, not to store your Nextcloud password, but
 
 _Summary:_ Letting the Add-On get an a app token is more convenient, but may fail resulting in your *password beeng stored unencrypted*. Supplying your own token is a little bit more secure, but inconvenient.
 
-## Admin guide
+### Upload problems
+
+If all uploads fail, it's usually a problem with the settings, either in Thunderbird (doublecheck everything in Settings -> Prefrences -> Attachments) or in your Nextcloud (point your admin to the [Admin guide](#nextcloud-admin-guide)).
+
+If the Add-On still fails, please check, if it's a known ~bug. Feel free to open a new issue otherwise.
+
+## Nextcloud admin guide
+
+Some settings in Nextcloud are relevant for this Add-On:
+
+* **Settings -> Sharing -> Allow apps to use the Share API** has to be enabled (*mandatory*)
+* **Settings -> Sharing -> Allow allow users tor share via link** has to be enabled (*mandatory*)
+* **Settings -> Sharing -> Allow allow users tor share via link -> Enforce password protection** might result in confusing error messages to users. Be prepared for questions, if you enable this. (*optionally off*)
 
 ## Developer guide
+
+If you'd like to contribute to the project, help with testing on different platforms or have any comments, just contact [me](@joendres).
 
 ### Dev resources
 
@@ -42,5 +59,5 @@ _Summary:_ Letting the Add-On get an a app token is more convenient, but may fai
 ## References
 
 * Based on [FileLink Provider for Dropbox](https://github.com/darktrojan/dropbox) by [Geoff Lankow](https://darktrojan.github.io/)
-* Icons from [Nextcloud for Filelink](https://github.com/nextcloud/nextcloud-filelink) by Olivier Paroz (@oparoz) and Guillaume Viguier-Just (@guillaumev).
+* Icons from [Nextcloud for Filelink](https://github.com/nextcloud/nextcloud-filelink) by [Olivier Paroz] (https://github.com/oparoz) and [Guillaume Viguier-Just](https://github.com/guillaumev).
 * Code and inspiration from Nextcloud for Filelink and [FileLink Provider for OwnCloud](https://github.com/thosmos/filelink-owncloud).

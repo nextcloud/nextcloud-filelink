@@ -1,5 +1,8 @@
-2.0.1
-- Fix issue 2: Preferences pane hangs on Save
+2.0.2 2002-01-03
+- Fix issue #1: Removes app token on account deletion
 
-2.0.0
+2.0.1 2002-01-03
+- Fix issue #2: Preferences pane hangs on Save
+
+2.0.0 2002-01-03
 - First public release

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<!--
+MIT License
+
+Copyright (c) 2020 Johannes Endres
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+ -->
+<head>
+  <meta charset="utf-8" />
+  <title>Nextcloud</title>
+  <link rel="stylesheet" type="text/css" href="management.css">
+  <script src="management.js" type="application/javascript" defer=""></script>
+</head>
+
+<body id="provider-management">
+  <header>
+    <a id="service_url" tabindex="-1"><img id="logo" src="management.png" alt="Nextcloud logo" /></a>
+    <h2 id="provider-name"> </h2>
+    <div id="freespaceGauge" hidden>
+      <label id="freespacelabel" for="freespace" data-message="freespace"></label>
+      <span id="meterspan">
+        <meter id="freespace" min="0" max="-2" value="-1">
+        </meter>
+      </span>
+    </div>
+  </header>
+
+  <form id="accountForm">
+    <div class="fullfield">
+      <label for="serverUrl" data-message="serverUrl"></label>
+      <details>
+        <summary tabindex="-1" data-message="detailSummary"></summary>
+        <p data-message="serverUrl_details"></p>
+      </details>
+      <input id="serverUrl" type="url" required tabindex="1" placeholder="https://example.com" data-stored=""/>
+    </div>
+
+    <div class="fullfield">
+      <label for="username" data-message="username"> </label>
+      <details>
+        <summary tabindex="-1" data-message="detailSummary"></summary>
+        <p data-message="username_details"></p>
+      </details>
+      <input id="username" type="text" required tabindex="1" data-stored=""/>
+    </div>
+
+    <div class="fullfield">
+      <label for="password" data-message="password"></label>
+      <details>
+        <summary tabindex="-1" data-message="detailSummary"></summary>
+        <p data-message="password_details"></p>
+      </details>
+      <input id="password" type="password" required tabindex="1" data-stored=""/>
+    </div>
+
+    <div class="fullfield">
+      <label for="storageFolder" data-message="storageFolder"> </label>
+      <details>
+        <summary tabindex="-1" data-message="detailSummary"></summary>
+        <p data-message="storageFolder_details"></p>
+      </details>
+      <input id="storageFolder" type="text" required tabindex="1" value="/Mail-attachments" data-stored="/Mail-attachments"/>
+    </div>
+
+    <div class="fullfield">
+      <span class="checkboxWithLabel">
+        <input id="useDlPassword" type="checkbox" tabindex="1" data-stored=""/>
+        <label for="useDlPassword" data-message="useDlPassword"> </label>
+      </span>
+      <details>
+        <summary tabindex="-1" data-message="detailSummary"></summary>
+        <p data-message="useDlPassword_details"></p>
+      </details>
+      <input id="downloadPassword" class="subinput" type="text" disabled tabindex="1" data-stored=""/>
+    </div>
+
+    <button id="saveButton" type="button" disabled tabindex="1" data-message="saveButton"></button>
+    <button id="resetButton" type="reset" disabled tabindex="1" data-message="resetButton"></button>
+  </form>
+</body>

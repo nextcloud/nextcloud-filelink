@@ -1,0 +1,55 @@
+{
+  "extensionDescription": {
+    "message": "Lade große Anhänge in deine Nextcloud, statt sie per Mail zu senden"
+  },
+  "saveButton": {
+    "message": "Speichern"
+  },
+  "resetButton": {
+    "message": "Zurücksetzen"
+  },
+  "detailSummary": {
+    "message": "Hilfe"
+  },
+  "serverUrl": {
+    "message": "Server-URL"
+  },
+  "serverUrl_details": {
+    "message": "Die URL des Nextcloud-Servers. Falls der Server auf einem ungewöhnlichen Port läuft, gehört die Portnummer mit in die URL."
+  },
+  "username": {
+    "message": "Username"
+  },
+  "username_details": {
+    "message": "Der Username auf dem Nextcloud-Server"
+  },
+  "password": {
+    "message": "App-Token oder Passwort"
+  },
+  "password_details": {
+    "message": "Ein App Passwort (Einstellungen -> Sicherheit -> App Passwort auf der Nextcloud) oder notfalls dein Nextcloud-Passwort. Das Add-On versucht, vor dem Speichern ein App Passwort zu erzeugen. Aber falls das fehlschlägt, wir das Passwort unverschlüsselt gespeichert."
+  },
+  "storageFolder": {
+    "message": "Speicherpfad in Nextcloud"
+  },
+  "storageFolder_details": {
+    "message": "Das Verzeichnis, in dem die Dateien abgelegt werden. Falls es nicht existiert, wird es automatisch angelegt."
+  },
+  "useDlPassword": {
+    "message": "Downloads mit Passwort sichern:"
+  },
+  "useDlPassword_details": {
+    "message": "Dieses Passwort muss den Richtlinien entsprechen, die der Admin deiner Nextcloud aufgestellt hat (Länge, Zeichen, Ziffern, ...), sonst schlägt der Upload fehl. Das Passwort musst du den Empfängern deiner Anhänge gesondert mitteilen, da sie es für den Download benötigen."
+  },
+  "freespace": {
+    "message": "Freier Speicher: $FREE$ GB von $FULL$ GB",
+    "placeholders": {
+      "free": {
+        "content": "$1"
+      },
+      "full": {
+        "content": "$2"
+      }
+    }
+  }
+}

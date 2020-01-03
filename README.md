@@ -12,7 +12,7 @@ Infomation for
 
 ### Installation
 
-FileLink Provider for Nextcloud will shortly be available from https://addons.thunderbird.net/de/thunderbird/. Until then download the [XPI file](raw/master/web-ext-artifacts/filelink_provider_for_nextcloud-2.0.0.xpi) and install it manually.
+FileLink Provider for Nextcloud will shortly be available from https://addons.thunderbird.net/de/thunderbird/. Until then download the [XPI file](https://gitlab.com/joendres/nextcloud-private/raw/master/web-ext-artifacts/filelink_provider_for_nextcloud-2.0.0.xpi) and install it manually.
 
 ### Account settings
 

@@ -1,3 +1,5 @@
+"use strict";
+
 var uploads = new Map();
 
 const apiBaseUrl = "/ocs/v2.php";
@@ -26,16 +28,16 @@ function encodePath(aStr) {
 
 /* If an account is removed also remove its stored data and the app token */
 browser.cloudFile.onAccountDeleted.addListener(async accountId => {
-    let accountInfo = await browser.storage.local.get(accountId);
+    const accountInfo = await browser.storage.local.get(accountId);
     if (accountInfo && accountId in accountInfo) {
         accountData = accountInfo[accountId];
-        let authHeader = "Basic " + btoa(accountData.username + ':' + accountData.password);
-        let url = accountData.serverUrl + "/ocs/v2.php/core/apppassword?format=json";
-        let headers = {
+        const authHeader = "Basic " + btoa(accountData.username + ':' + accountData.password);
+        const url = accountData.serverUrl + "/ocs/v2.php/core/apppassword?format=json";
+        const headers = {
             "Authorization": authHeader,
             "OCS-APIREQUEST": "true",
         };
-        let fetchInfo = {
+        const fetchInfo = {
             method: "DELETE",
             headers,
         };
@@ -47,7 +49,7 @@ browser.cloudFile.onAccountDeleted.addListener(async accountId => {
 });
 
 async function createOneFolder(accountData, folder) {
-    let authHeader = "Basic " + btoa(accountData.username + ':' + accountData.password);
+    const authHeader = "Basic " + btoa(accountData.username + ':' + accountData.password);
 
     // URL of the folder to create
     let url = accountData.serverUrl;
@@ -55,12 +57,12 @@ async function createOneFolder(accountData, folder) {
     url += accountData.username;
     url += encodePath(folder);
 
-    let headers = {
+    const headers = {
         "Authorization": authHeader
     };
 
     // Try to create the folder
-    let fetchInfo = {
+    const fetchInfo = {
         method: "MKCOL",
         headers,
     };
@@ -71,7 +73,7 @@ async function createOneFolder(accountData, folder) {
 
 async function recursivelyCreateFolder(accountData, folder) {
     // Looks clumsy, but *always* make sure recursion ends
-    if (folder == "/") {
+    if ("/" === folder) {
         return false
     } else {
         switch (await createOneFolder(accountData, folder)) {
@@ -83,7 +85,7 @@ async function recursivelyCreateFolder(accountData, folder) {
                 // Try to make parent folder
                 if (await recursivelyCreateFolder(accountData, folder.split("/").slice(0, -1).join("/"))) {
                     // Try again
-                    if (201 == await createOneFolder(accountData, folder)) {
+                    if (201 === await createOneFolder(accountData, folder)) {
                         return true
                     }
                 }
@@ -94,14 +96,14 @@ async function recursivelyCreateFolder(accountData, folder) {
 }
 
 browser.cloudFile.onFileUpload.addListener(async (account, { id, name, data }) => {
-    let accountInfo = await browser.storage.local.get(account.id);
+    const accountInfo = await browser.storage.local.get(account.id);
     if (!accountInfo || !(account.id in accountInfo)) {
         throw new Error("Upload failed: No account data");
     };
 
     // Make sure storageFolder exists
     // Creation implicitly checks for existence of folder, so the extra webservice call for checking first isn't necessary.
-    let foldersOK = await recursivelyCreateFolder(accountInfo[account.id], accountInfo[account.id].storageFolder);
+    const foldersOK = await recursivelyCreateFolder(accountInfo[account.id], accountInfo[account.id].storageFolder);
     if (!foldersOK) {
         throw new Error("Upload failed: Can't create folder");
     }
@@ -113,9 +115,9 @@ browser.cloudFile.onFileUpload.addListener(async (account, { id, name, data }) =
     uploads.set(id, uploadInfo);
 
     // Combine some things we will be needing
-    let authHeader = "Basic " + btoa(accountInfo[account.id].username + ':' + accountInfo[account.id].password);
+    const authHeader = "Basic " + btoa(accountInfo[account.id].username + ':' + accountInfo[account.id].password);
 
-    let headers = {
+    const headers = {
         // Content-Type is not yet necessary, but we will use the same headers for upload
         "Content-Type": "application/octet-stream",
         "Authorization": authHeader
@@ -128,7 +130,7 @@ browser.cloudFile.onFileUpload.addListener(async (account, { id, name, data }) =
     url += encodePath(accountInfo[account.id].storageFolder);
     url += '/' + encodePath(name);
 
-    fetchInfo = {
+    const fetchInfo = {
         method: "PUT",
         headers,
         body: data,
@@ -147,7 +149,7 @@ browser.cloudFile.onFileUpload.addListener(async (account, { id, name, data }) =
 
     // Create share link
     let shareFormData = "path=" + encodePath(accountInfo[account.id].storageFolder + "/" + name);
-    shareFormData += "&shareType=3"; // 3 == public share
+    shareFormData += "&shareType=3"; // 3 = public share
 
     if (accountInfo[account.id].useDlPassword) {
         shareFormData += "&password=" + encodeURIComponent(accountInfo[account.id].downloadPassword)
@@ -174,7 +176,7 @@ browser.cloudFile.onFileUpload.addListener(async (account, { id, name, data }) =
         throw new Error("Sharing failed:" + response.statusText);
     }
 
-    let parsedResponse = await response.json();
+    const parsedResponse = await response.json();
 
     return { url: parsedResponse.ocs.data.url };
 });
@@ -187,10 +189,10 @@ browser.cloudFile.onFileDeleted.addListener(async (account, id) => {
         return;
     }
 
-    let accountInfo = await browser.storage.local.get(account.id);
+    const accountInfo = await browser.storage.local.get(account.id);
 
     // Combine some things we will be needing
-    let authHeader = "Basic " + btoa(accountInfo[account.id].username + ':' + accountInfo[account.id].password);
+    const authHeader = "Basic " + btoa(accountInfo[account.id].username + ':' + accountInfo[account.id].password);
 
     // URL of the folder to create
     let url = accountInfo[account.id].serverUrl;
@@ -199,11 +201,11 @@ browser.cloudFile.onFileDeleted.addListener(async (account, id) => {
     url += encodePath(accountInfo[account.id].storageFolder);
     url += '/' + encodePath(uploadInfo.name);
 
-    let headers = {
+    const headers = {
         "Authorization": authHeader
     };
 
-    let fetchInfo = {
+    const fetchInfo = {
         method: "DELETE",
         headers,
     };
@@ -217,17 +219,17 @@ browser.cloudFile.onFileDeleted.addListener(async (account, id) => {
 
 /** Copy & Paste from Dropbox extension */
 browser.cloudFile.onFileUploadAbort.addListener((account, id) => {
-    let uploadInfo = uploads.get(id);
+    const uploadInfo = uploads.get(id);
     if (uploadInfo && uploadInfo.abortController) {
         uploadInfo.abortController.abort();
     }
 });
 
 async function updateStorageInfo(accountId) {
-    let accountInfo = await browser.storage.local.get(accountId);
+    const accountInfo = await browser.storage.local.get(accountId);
 
     // Combine some things we will be needing
-    let authHeader = "Basic " + btoa(accountInfo[accountId].username + ':' + accountInfo[accountId].password);
+    const authHeader = "Basic " + btoa(accountInfo[accountId].username + ':' + accountInfo[accountId].password);
 
     // URL of the user to check
     let url = accountInfo[accountId].serverUrl;
@@ -235,12 +237,12 @@ async function updateStorageInfo(accountId) {
     url += accountInfo[accountId].username;
     url += "?format=json"
 
-    let headers = {
+    const headers = {
         "Authorization": authHeader,
         "OCS-APIRequest": "true"
     };
 
-    let fetchInfo = {
+    const fetchInfo = {
         method: "GET",
         headers,
     };
@@ -248,9 +250,9 @@ async function updateStorageInfo(accountId) {
     let response = await fetch(url, fetchInfo);
 
     if (response.ok) {
-        let data = await response.json();
-        let spaceRemaining = data.ocs.data.quota.free;
-        let spaceUsed = data.ocs.data.quota.used;
+        const data = await response.json();
+        const spaceRemaining = data.ocs.data.quota.free;
+        const spaceUsed = data.ocs.data.quota.used;
         browser.cloudFile.updateAccount(accountId, {
             spaceRemaining: spaceRemaining > 0 ? spaceRemaining : -1,
             spaceUsed: spaceUsed > 0 ? spaceUsed : -1,

@@ -1,21 +1,23 @@
-let accountId = new URL(location.href).searchParams.get("accountId");
-let accountForm = document.querySelector("#accountForm");
-let serverUrl = document.querySelector("#serverUrl");
-let username = document.querySelector("#username");
-let password = document.querySelector("#password");
-let storageFolder = document.querySelector("#storageFolder");
-let saveButton = document.querySelector("#saveButton");
-let resetButton = document.querySelector("#resetButton");
-let service_url = document.querySelector("#service_url");
-let useDlPassword = document.querySelector("#useDlPassword");
-let downloadPassword = document.querySelector("#downloadPassword");
+"use strict";
+
+const accountId = new URL(location.href).searchParams.get("accountId");
+const accountForm = document.querySelector("#accountForm");
+const serverUrl = document.querySelector("#serverUrl");
+const username = document.querySelector("#username");
+const password = document.querySelector("#password");
+const storageFolder = document.querySelector("#storageFolder");
+const saveButton = document.querySelector("#saveButton");
+const resetButton = document.querySelector("#resetButton");
+const service_url = document.querySelector("#service_url");
+const useDlPassword = document.querySelector("#useDlPassword");
+const downloadPassword = document.querySelector("#downloadPassword");
 
 (() => {
     // Fill in form fields
     setStoredData();
 
     // Add localized strings
-    for (let element of document.querySelectorAll("[data-message]")) {
+    for (const element of document.querySelectorAll("[data-message]")) {
         element.textContent = browser.i18n.getMessage(element.dataset.message);
     };
     // Add text from other sources
@@ -25,15 +27,15 @@ let downloadPassword = document.querySelector("#downloadPassword");
         theAccount => {
             document.querySelector("#provider-name").textContent = theAccount.name;
             // Update the free space gauge
-            let free = theAccount.spaceRemaining;
-            let used = theAccount.spaceUsed;
+            const free = theAccount.spaceRemaining;
+            const used = theAccount.spaceUsed;
             if (free >= 0 && used >= 0) {
-                let full = (free + used) / (1024.0 * 1024.0 * 1024.0); // Convert bytes to gigabytes
+                const full = (free + used) / (1024.0 * 1024.0 * 1024.0); // Convert bytes to gigabytes
                 free /= 1024.0 * 1024.0 * 1024.0;
                 document.querySelector("#freespacelabel").textContent = browser.i18n.getMessage("freespace", [
                     free > 100 ? free.toFixed() : free.toPrecision(2),
                     full > 100 ? full.toFixed() : full.toPrecision(2)]);
-                let meter = document.querySelector("#freespace");
+                const meter = document.querySelector("#freespace");
                 meter.max = full;
                 meter.value = free;
                 meter.low = full / 20;
@@ -53,7 +55,7 @@ async function setStoredData() {
     const accountInfo = await browser.storage.local.get([accountId]);
     if (accountId in accountInfo) {
         for (const key in accountInfo[accountId]) {
-            let element = document.getElementById(key);
+            const element = document.getElementById(key);
             if (element && accountInfo[accountId].hasOwnProperty(key)) {
                 element.value = accountInfo[accountId][key];
                 element.dataset.stored = accountInfo[accountId][key];
@@ -110,10 +112,10 @@ async function convertPassword() {
 
     const response = await fetch(url, fetchInfo);
     const ocsData = (await response.json()).ocs.data;
-    if (response.status == 200 && ocsData.apppassword) {
+    if (200 === response.status && ocsData.apppassword) {
         retval.password = ocsData.apppassword;
         retval.loginOk = true;
-    } else if (response.status == 403) {
+    } else if (403 === response.status) {
         // It's already a valid token, don't change
         retval.loginOk = true;
     };
@@ -132,7 +134,7 @@ saveButton.onclick = async () => {
     };
 
     // Sanitize input
-    for (let element of document.querySelectorAll("input")) {
+    for (const element of document.querySelectorAll("input")) {
         element.value = element.value.trim();
     };
     serverUrl.value = serverUrl.value.replace(/\/+$/, "");
@@ -142,9 +144,11 @@ saveButton.onclick = async () => {
         storageFolder.value = "/" + storageFolder.value;
     }
 
-    if (password.value != password.dataset.stored) {
+    /* Convert password to app token using nextcloud web service */
+    if (password.value !== password.dataset.stored) {
         password.value = (await convertPassword()).password;
     }
+
     // Store account data
     await browser.storage.local.set({
         [accountId]:
@@ -163,7 +167,7 @@ saveButton.onclick = async () => {
         uploadSizeLimit: 512 * 1024 * 1024,
     });
 
-    for (let elementId in states) {
+    for (const elementId in states) {
         document.getElementById(elementId).disabled = states[elementId];
     };
     document.getElementById("provider-management").classList.remove('busy');

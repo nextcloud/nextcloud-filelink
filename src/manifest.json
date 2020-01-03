@@ -2,15 +2,15 @@
     "manifest_version": 2,
     "applications": {
         "gecko": {
-            "id": "nextcloud@johannes-endres.de",
+            "id": "filelink@johannes-endres.de",
             "strict_min_version": "68.0"
         }
     },
     "name": "__MSG_extensionName__",
     "description": "__MSG_extensionDescription__",
-    "homepage_url": "https://gitlab.com/joendres/nextcloud-filelink2",
+    "homepage_url": "https://gitlab.com/joendres/filelink-nextcloud",
     "author": "Johannes Endres",
-    "version": "2.0.0",
+    "version": "2.0.2",
     "icons": {
         "128": "icon64.png"
     },

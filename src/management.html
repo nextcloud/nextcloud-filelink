@@ -51,7 +51,8 @@
         <summary tabindex="-1" data-message="detailSummary"></summary>
         <p data-message="serverUrl_details"></p>
       </details>
-      <input id="serverUrl" type="url" required tabindex="1" placeholder="https://example.com" data-stored="" />
+      <input id="serverUrl" type="url" pattern="https?://.*" required tabindex="1" placeholder="https://example.com"
+        data-stored="" />
     </div>
 
     <div class="fullfield">

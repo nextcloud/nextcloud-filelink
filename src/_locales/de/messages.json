@@ -15,7 +15,7 @@
     "message": "Server-URL"
   },
   "serverUrl_details": {
-    "message": "Die URL des Nextcloud-Servers. Falls der Server auf einem ungewöhnlichen Port läuft, gehört die Portnummer mit in die URL."
+    "message": "Die URL des Nextcloud-Servers, muss mit http oder https beginnen. Falls der Server auf einem ungewöhnlichen Port läuft, gehört die Portnummer mit in die URL."
   },
   "username": {
     "message": "Username"

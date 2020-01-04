@@ -18,7 +18,7 @@
     "message": "Server URL"
   },
   "serverUrl_details": {
-    "message": "The base URL of the Nextcloud server; if your server runs on a non-standard port, put it into the URL."
+    "message": "The base URL of the Nextcloud server, must start with http or https. If your server runs on a non-standard port, put it into the URL."
   },
   "username": {
     "message": "Username"

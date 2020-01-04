@@ -32,7 +32,7 @@ const webDavUrl = "/remote.php/dav/files/";
 browser.storage.local.get().then(
     data => {
         for (const key in data) {
-            browser.cloudFile.updateAccount(key, { configured: true });
+            browser.cloudFile.updateAccount(key, { configured: true, });
             updateStorageInfo(key);
         }
     }
@@ -49,7 +49,7 @@ function encodePath(aStr) {
 
 /* If an account is removed also remove its stored data and the app token */
 browser.cloudFile.onAccountDeleted.addListener(async accountId => {
-    browser.storage.local.remove([accountId]);
+    browser.storage.local.remove(accountId);
 });
 
 async function createOneFolder(accountData, folder) {
@@ -62,7 +62,7 @@ async function createOneFolder(accountData, folder) {
     url += encodePath(folder);
 
     const headers = {
-        "Authorization": authHeader
+        "Authorization": authHeader,
     };
 
     // Try to create the folder
@@ -113,7 +113,7 @@ browser.cloudFile.onFileUpload.addListener(async (account, { id, name, data }) =
 
     let uploadInfo = {
         name,
-        abortController: new AbortController()
+        abortController: new AbortController(),
     };
     uploads.set(id, uploadInfo);
 
@@ -123,7 +123,7 @@ browser.cloudFile.onFileUpload.addListener(async (account, { id, name, data }) =
     let headers = {
         // Content-Type is not yet necessary, but we will use the same headers for upload
         "Content-Type": "application/octet-stream",
-        "Authorization": authHeader
+        "Authorization": authHeader,
     };
 
     //  Upload URL
@@ -163,7 +163,7 @@ browser.cloudFile.onFileUpload.addListener(async (account, { id, name, data }) =
     headers = {
         'Content-Type': "application/x-www-form-urlencoded",
         "OCS-APIREQUEST": "true",
-        "Authorization": authHeader
+        "Authorization": authHeader,
     };
 
     fetchInfo = {
@@ -181,7 +181,7 @@ browser.cloudFile.onFileUpload.addListener(async (account, { id, name, data }) =
 
     const parsedResponse = await response.json();
 
-    return { url: parsedResponse.ocs.data.url };
+    return { url: parsedResponse.ocs.data.url, };
 });
 
 /** Try to delete a file */
@@ -205,7 +205,7 @@ browser.cloudFile.onFileDeleted.addListener(async (account, id) => {
     url += '/' + encodePath(uploadInfo.name);
 
     const headers = {
-        "Authorization": authHeader
+        "Authorization": authHeader,
     };
 
     const fetchInfo = {
@@ -242,7 +242,7 @@ async function updateStorageInfo(accountId) {
 
     const headers = {
         "Authorization": authHeader,
-        "OCS-APIRequest": "true"
+        "OCS-APIRequest": "true",
     };
 
     const fetchInfo = {

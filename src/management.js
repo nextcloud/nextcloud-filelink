@@ -55,7 +55,7 @@ let downloadPassword = document.querySelector("#downloadPassword");
                 free /= 1024.0 * 1024.0 * 1024.0;
                 document.querySelector("#freespacelabel").textContent = browser.i18n.getMessage("freespace", [
                     free > 100 ? free.toFixed() : free.toPrecision(2),
-                    full > 100 ? full.toFixed() : full.toPrecision(2)]);
+                    full > 100 ? full.toFixed() : full.toPrecision(2),]);
                 const meter = document.querySelector("#freespace");
                 meter.max = full;
                 meter.value = free;
@@ -73,7 +73,7 @@ async function setStoredData() {
     downloadPassword.disabled = true;
     downloadPassword.required = false;
 
-    const accountInfo = await browser.storage.local.get([accountId]);
+    const accountInfo = await browser.storage.local.get(accountId);
     if (accountId in accountInfo) {
         for (const key in accountInfo[accountId]) {
             const element = document.getElementById(key);
@@ -99,7 +99,7 @@ function activateSave() {
     resetButton.disabled = false;
 }
 
-/* enable/disable download password field according to checkbox state */ 
+/* enable/disable download password field according to checkbox state */
 useDlPassword.onclick = async () => {
     downloadPassword.disabled = !useDlPassword.checked;
     downloadPassword.required = !downloadPassword.disabled;
@@ -121,7 +121,7 @@ async function convertPassword() {
         "OCS-APIRequest": "true",
         "User-Agent": "Filelink for Nextcloud",
     };
-    
+
     const fetchInfo = {
         method: "GET",
         headers,
@@ -131,7 +131,7 @@ async function convertPassword() {
         fetch(url, fetchInfo),
         new Promise(function (resolve, reject) {
             setTimeout(() => reject(), 2000); // Two seconds
-        })
+        }),
     ]).then(
         // response from fetch, parse its body
         response => response.json(),
@@ -140,7 +140,7 @@ async function convertPassword() {
         .then(
             // If the json contained a usable answer, return it, otherwise leave unchanged
             parsed => (parsed && parsed.ocs && parsed.ocs.data && parsed.ocs.data.apppassword) ?
-            parsed.ocs.data.apppassword : password.value);
+                parsed.ocs.data.apppassword : password.value);
 }
 
 /** Handler for Save button */
@@ -164,7 +164,7 @@ saveButton.onclick = async () => {
         storageFolder.value = "/" + storageFolder.value;
     }
 
-    if (password.value != password.dataset.stored) {
+    if (password.value !== password.dataset.stored) {
         password.value = await convertPassword();
     }
 

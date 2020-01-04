@@ -1,0 +1,10 @@
+{
+    "moz": true,
+    "esversion": 8,
+    "globals": {
+        "browser": false,
+        "fetch": false,
+        "btoa":false,
+        "AbortController": false
+    }
+}

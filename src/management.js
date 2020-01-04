@@ -1,4 +1,3 @@
-"use strict";
 /*
 MIT License
 
@@ -41,7 +40,7 @@ let downloadPassword = document.querySelector("#downloadPassword");
     // Add localized strings
     for (const element of document.querySelectorAll("[data-message]")) {
         element.textContent = browser.i18n.getMessage(element.dataset.message);
-    };
+    }
     // Add text from other sources
     service_url.setAttribute("href", browser.runtime.getManifest().cloud_file.service_url);
 
@@ -49,7 +48,7 @@ let downloadPassword = document.querySelector("#downloadPassword");
         theAccount => {
             document.querySelector("#provider-name").textContent = theAccount.name;
             // Update the free space gauge
-            const free = theAccount.spaceRemaining;
+            let free = theAccount.spaceRemaining;
             const used = theAccount.spaceUsed;
             if (free >= 0 && used >= 0) {
                 const full = (free + used) / (1024.0 * 1024.0 * 1024.0); // Convert bytes to gigabytes
@@ -82,7 +81,7 @@ async function setStoredData() {
                 element.value = accountInfo[accountId][key];
                 element.dataset.stored = accountInfo[accountId][key];
             }
-        };
+        }
         useDlPassword.checked = accountInfo[accountId].useDlPassword;
         useDlPassword.dataset.stored = accountInfo[accountId].useDlPassword;
         downloadPassword.disabled = !useDlPassword.checked;
@@ -96,15 +95,16 @@ function activateSave() {
         saveButton.disabled = false;
     } else {
         saveButton.disabled = true;
-    };
+    }
     resetButton.disabled = false;
 }
 
+/* enable/disable download password field according to checkbox state */ 
 useDlPassword.onclick = async () => {
     downloadPassword.disabled = !useDlPassword.checked;
     downloadPassword.required = !downloadPassword.disabled;
     accountForm.checkValidity();
-}
+};
 
 /** Handler for Cancel button, restores saved values */
 resetButton.onclick = async () => {
@@ -151,12 +151,12 @@ saveButton.onclick = async () => {
     for (let element of document.querySelectorAll("input")) {
         states[element.id] = element.disabled;
         element.disabled = true;
-    };
+    }
 
     // Sanitize input
     for (const element of document.querySelectorAll("input")) {
         element.value = element.value.trim();
-    };
+    }
     serverUrl.value = serverUrl.value.replace(/\/+$/, "");
 
     storageFolder.value = storageFolder.value.replace(/\/+$/, "");
@@ -188,6 +188,6 @@ saveButton.onclick = async () => {
 
     for (const elementId in states) {
         document.getElementById(elementId).disabled = states[elementId];
-    };
+    }
     document.getElementById("provider-management").classList.remove('busy');
 };

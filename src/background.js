@@ -1,5 +1,3 @@
-"use strict";
-
 /* 
 MIT License
 
@@ -80,19 +78,18 @@ async function createOneFolder(accountData, folder) {
 async function recursivelyCreateFolder(accountData, folder) {
     // Looks clumsy, but *always* make sure recursion ends
     if ("/" === folder) {
-        return false
+        return false;
     } else {
         switch (await createOneFolder(accountData, folder)) {
             case 405: // Already exists
             case 201: // Created successfully
                 return true;
-                break;
             case 409: // Intermediate folder missing
                 // Try to make parent folder
                 if (await recursivelyCreateFolder(accountData, folder.split("/").slice(0, -1).join("/"))) {
                     // Try again
                     if (201 === await createOneFolder(accountData, folder)) {
-                        return true
+                        return true;
                     }
                 }
                 break;
@@ -105,7 +102,7 @@ browser.cloudFile.onFileUpload.addListener(async (account, { id, name, data }) =
     const accountInfo = await browser.storage.local.get(account.id);
     if (!accountInfo || !(account.id in accountInfo)) {
         throw new Error("Upload failed: No account data");
-    };
+    }
 
     // Make sure storageFolder exists
     // Creation implicitly checks for existence of folder, so the extra webservice call for checking first isn't necessary.
@@ -123,7 +120,7 @@ browser.cloudFile.onFileUpload.addListener(async (account, { id, name, data }) =
     // Combine some things we will be needing
     const authHeader = "Basic " + btoa(accountInfo[account.id].username + ':' + accountInfo[account.id].password);
 
-    const headers = {
+    let headers = {
         // Content-Type is not yet necessary, but we will use the same headers for upload
         "Content-Type": "application/octet-stream",
         "Authorization": authHeader
@@ -136,14 +133,14 @@ browser.cloudFile.onFileUpload.addListener(async (account, { id, name, data }) =
     url += encodePath(accountInfo[account.id].storageFolder);
     url += '/' + encodePath(name);
 
-    const fetchInfo = {
+    let fetchInfo = {
         method: "PUT",
         headers,
         body: data,
         signal: uploadInfo.abortController.signal,
     };
 
-    response = await fetch(url, fetchInfo);
+    let response = await fetch(url, fetchInfo);
     delete uploadInfo.abortController;
 
     if (!response.ok) {
@@ -158,7 +155,7 @@ browser.cloudFile.onFileUpload.addListener(async (account, { id, name, data }) =
     shareFormData += "&shareType=3"; // 3 = public share
 
     if (accountInfo[account.id].useDlPassword) {
-        shareFormData += "&password=" + encodeURIComponent(accountInfo[account.id].downloadPassword)
+        shareFormData += "&password=" + encodeURIComponent(accountInfo[account.id].downloadPassword);
     }
 
     url = accountInfo[account.id].serverUrl + shareApiUrl + "?format=json";
@@ -241,7 +238,7 @@ async function updateStorageInfo(accountId) {
     let url = accountInfo[accountId].serverUrl;
     url += userInfoUrl;
     url += accountInfo[accountId].username;
-    url += "?format=json"
+    url += "?format=json";
 
     const headers = {
         "Authorization": authHeader,
@@ -262,6 +259,6 @@ async function updateStorageInfo(accountId) {
         browser.cloudFile.updateAccount(accountId, {
             spaceRemaining: spaceRemaining > 0 ? spaceRemaining : -1,
             spaceUsed: spaceUsed > 0 ? spaceUsed : -1,
-        })
+        });
     }
 }

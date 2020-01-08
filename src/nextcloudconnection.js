@@ -53,10 +53,9 @@ class utils {
      * @returns {string}
      */
     static encodepath(aStr) {
-        return encodeURIComponent(aStr)
-            .replace(/[!'()*]/g,
-                match => ('%' + match.charCodeAt(0).toString(16).toUpperCase()))
-            .replace(/%2F/gi, '/');
+        return encodeURI(aStr)
+            .replace(/[,?:@&=+$#!'()*]/g,
+                match => ('%' + match.charCodeAt(0).toString(16).toUpperCase()));
     }
 }
 

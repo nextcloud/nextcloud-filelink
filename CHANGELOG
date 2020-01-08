@@ -9,4 +9,6 @@
 - Fix issue #2: Preferences pane hangs on Save
 
 2.0.0 2020-01-03
-- First public release
+- Works with Thunderbird 68+
+- Handles multiple accounts
+- All accounts editable

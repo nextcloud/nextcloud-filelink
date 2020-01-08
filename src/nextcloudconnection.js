@@ -28,6 +28,7 @@ const apiTimeout = 3; // seconds
 const apiBaseUrl = "/ocs/v2.php";
 const userInfoUrl = "/cloud/users/";
 const shareApiUrl = "/apps/files_sharing/api/v1/shares";
+const appPasswordUrl = "/core/getapppassword";
 const davBaseUrl = "/remote.php/dav/files/";
 
 /**
@@ -64,12 +65,18 @@ class utils {
  */
 class NextcloudConnection {
     /**
+     * Creates an object for communication with a Nextcloud instance. To use it before account data is stored, supply all the optional parameters.
      * 
      * @param {*} accountId - Whatever Thunderbird uses as an account identifier
+     * @param {*} settings - An object containing all settings
      */
-    constructor(accountId) {
+    constructor(accountId, settings) {
         this._accountId = accountId;
         this._complete = false;
+
+        if (settings) {
+            this._init(settings);
+        }
     }
 
     /**
@@ -85,11 +92,36 @@ class NextcloudConnection {
             );
 
     }
+
+    /**
+     * Store the current values of all properties in the local browser storage
+     */
+    async store() {
+        browser.storage.local.set({
+            [this._accountId]:
+            {
+                serverUrl: this._serverurl,
+                username: this._username,
+                password: this._password,
+                storageFolder: this._storageFolder,
+                useDlPassword: this._useDlPassword,
+                downloadPassword: this._downloadPassword,
+            },
+        });
+    }
+
     /**
      * Sets the configured property of Thunderbird's cloudFileAccount according to actual state
      */
     async updateConfigured() {
         browser.cloudFile.updateAccount(this._accountId, { configured: this._complete, });
+    }
+
+    /**
+     * Fetches a new app password from the Nextcloud web service
+     */
+    async getAppPasswort() {
+        return this._doApiCall(appPasswordUrl, "GET");
     }
 
     /**
@@ -219,48 +251,57 @@ class NextcloudConnection {
     }
 
     /**
+     * Internal function to load properties with values
+     * 
+     * @param {Object} settings - An object containing settings for all properties
+     */
+    _init(settings) {
+        this._complete = true;
+        /* Copy all account data to fields */
+        this._serverurl = settings.serverUrl;
+        this._complete = this._complete && Boolean(this._serverurl);
+
+        this._username = settings.username;
+        this._complete = this._complete && Boolean(this._username);
+
+        this._password = settings.password;
+        this._complete = this._complete && Boolean(this._password);
+
+        this._storageFolder = settings.storageFolder;
+        this._complete = this._complete && Boolean(this._storageFolder);
+
+        this._useDlPassword = settings.useDlPassword;
+        this._downloadPassword = settings.downloadPassword;
+        if (this._useDlPassword) {
+            this._complete = this._complete && Boolean(this._downloadPassword);
+        }
+
+        let auth = "Basic " + btoa(this._username + ':' + this._password);
+
+        this._davHeaders = {
+            "Authorization": auth,
+            "User-Agent": "Filelink for Nextcloud",
+            "Content-Type": "application/octet-stream",
+        };
+
+        this._apiHeaders = {
+            "OCS-APIREQUEST": "true",
+            "Authorization": auth,
+            "User-Agent": "Filelink for Nextcloud",
+        };
+
+
+
+    }
+
+    /**
      * Load account state from configuration storage
      */
     async setup() {
-        // const cfa = await browser.cloudFile.getAccount(this._accountId);
-        // this._complete = cfa.configured;
         this._complete = false;
         let accountInfo = await browser.storage.local.get(this._accountId);
         if (accountInfo && this._accountId in accountInfo) {
-
-            this._complete = true;
-            /* Copy all account data to fields */
-            this._serverurl = accountInfo[this._accountId].serverUrl;
-            this._complete = this._complete && Boolean(this._serverurl);
-
-            this._username = accountInfo[this._accountId].username;
-            this._complete = this._complete && this._username;
-
-            this._password = accountInfo[this._accountId].password;
-            this._complete = this._complete && Boolean(this._password);
-
-            this._storageFolder = accountInfo[this._accountId].storageFolder;
-            this._complete = this._complete && Boolean(this._storageFolder);
-
-            this._useDlPassword = accountInfo[this._accountId].useDlPassword;
-            this._downloadPassword = accountInfo[this._accountId].downloadPassword;
-            if (this._useDlPassword) {
-                this._complete = this._complete && Boolean(this._downloadPassword);
-            }
-            /* Put together some stuff we'll need */
-            const auth = "Basic " + btoa(this._username + ':' + this._password);
-
-            this._davHeaders = {
-                "Authorization": auth,
-                "User-Agent": "Filelink for Nextcloud",
-                "Content-Type": "application/octet-stream",
-            };
-
-            this._apiHeaders = {
-                "OCS-APIREQUEST": "true",
-                "Authorization": auth,
-                "User-Agent": "Filelink for Nextcloud",
-            };
+            this._init(accountInfo[this._accountId]);
         }
     }
 
@@ -280,7 +321,7 @@ class NextcloudConnection {
 
         let fetchInfo = {
             method: method ? method : 'GET',
-            headers: { ...this._apiHeaders, ...additional_headers, },
+            headers: additional_headers ? { ...this._apiHeaders, ...additional_headers, } : this._apiHeaders,
         };
         if (undefined !== body) {
             fetchInfo = { ...fetchInfo, body, };

@@ -17,7 +17,7 @@ Information for
 
 ### Installation
 
-FileLink for Nextcloud will shortly be available from https://addons.thunderbird.net/de/thunderbird/. Until then download the [XPI file](https://gitlab.com/joendres/filelink-nextcloud/raw/master/web-ext-artifacts/filelink_provider_for_nextcloud-2.0.3.xpi) and install it manually.
+FileLink for Nextcloud will shortly be available from https://addons.thunderbird.net/de/thunderbird/. Until then download the [XPI file](https://gitlab.com/joendres/filelink-nextcloud/raw/master/web-ext-artifacts/filelink_provider_for_nextcloud-2.0.4.xpi) and install it manually.
 
 ### Password vs. App Token
 

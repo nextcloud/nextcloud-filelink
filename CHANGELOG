@@ -1,3 +1,6 @@
+2.0.4 2020-01-08
+- Internal rewrite, no changed functions
+
 2.0.3 2020-01-08
 - Fix issue #9: Accepts other url types than https and http
 - Fix issue #10: Doesn't upload huge files

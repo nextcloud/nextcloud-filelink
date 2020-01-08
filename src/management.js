@@ -181,8 +181,6 @@ saveButton.onclick = async () => {
     });
     await browser.cloudFile.updateAccount(accountId, {
         configured: true,
-        // Default upload limit of Nextcloud
-        uploadSizeLimit: 512 * 1024 * 1024,
     });
 
     for (let elementId in states) {

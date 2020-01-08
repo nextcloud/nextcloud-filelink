@@ -19,6 +19,8 @@ COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
 IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. */
 
+/* global NextcloudConnection */
+
 let accountId = new URL(location.href).searchParams.get("accountId");
 let accountForm = document.querySelector("#accountForm");
 let serverUrl = document.querySelector("#serverUrl");
@@ -39,12 +41,14 @@ let downloadPassword = document.querySelector("#downloadPassword");
     for (const element of document.querySelectorAll("[data-message]")) {
         element.textContent = browser.i18n.getMessage(element.dataset.message);
     }
+
     // Add text from other sources
     service_url.setAttribute("href", browser.runtime.getManifest().cloud_file.service_url);
 
     browser.cloudFile.getAccount(accountId).then(
         theAccount => {
             document.querySelector("#provider-name").textContent = theAccount.name;
+
             // Update the free space gauge
             let free = theAccount.spaceRemaining;
             const used = theAccount.spaceUsed;
@@ -61,12 +65,16 @@ let downloadPassword = document.querySelector("#downloadPassword");
                 document.querySelector("#freespaceGauge").hidden = false;
             }
         });
+
     // Make form active
     for (const inp of document.querySelectorAll("input")) {
-        inp.oninput = activateSave;
+        inp.oninput = activateButtons;
     }
 })();
 
+/**
+ * Load stored account data into form
+ */
 async function setStoredData() {
     downloadPassword.disabled = true;
     downloadPassword.required = false;
@@ -87,8 +95,10 @@ async function setStoredData() {
     }
 }
 
-/** Only activate the Save button, if the form input is OK */
-function activateSave() {
+/** 
+ * Handler for input event of all inputs: Only activate the buttons, if the form input is OK
+ */
+function activateButtons() {
     if (accountForm.checkValidity()) {
         saveButton.disabled = false;
     } else {
@@ -97,50 +107,22 @@ function activateSave() {
     resetButton.disabled = false;
 }
 
-/* enable/disable download password field according to checkbox state */
+/**
+ *  enable/disable download password field according to checkbox state
+ */
 useDlPassword.onclick = async () => {
     downloadPassword.disabled = !useDlPassword.checked;
     downloadPassword.required = !downloadPassword.disabled;
     accountForm.checkValidity();
 };
 
-/** Handler for Cancel button, restores saved values */
+/** 
+ * Handler for Cancel button, restores saved values
+ */
 resetButton.onclick = async () => {
     setStoredData();
     resetButton.disabled = saveButton.disabled = true;
 };
-
-/** Convert the given password into an app password */
-async function convertPassword() {
-    const url = serverUrl.value + "/ocs/v2.php/core/getapppassword?format=json";
-
-    const headers = {
-        "Authorization": "Basic " + btoa(username.value + ':' + password.value),
-        "OCS-APIRequest": "true",
-        "User-Agent": "Filelink for Nextcloud",
-    };
-
-    const fetchInfo = {
-        method: "GET",
-        headers,
-    };
-
-    return Promise.race([
-        fetch(url, fetchInfo),
-        new Promise(function (resolve, reject) {
-            setTimeout(() => reject(), 2000); // Two seconds
-        }),
-    ]).then(
-        // response from fetch, parse its body
-        response => response.json(),
-        // timeout, just pass on empty object
-        () => { })
-        .then(
-            // If the json contained a usable answer, return it, otherwise leave
-            // unchanged
-            parsed => (parsed && parsed.ocs && parsed.ocs.data && parsed.ocs.data.apppassword) ?
-                parsed.ocs.data.apppassword : password.value);
-}
 
 /** Handler for Save button */
 saveButton.onclick = async () => {
@@ -158,18 +140,11 @@ saveButton.onclick = async () => {
     }
     serverUrl.value = serverUrl.value.replace(/\/+$/, "");
 
+    storageFolder.value = "/" + storageFolder.value;
     storageFolder.value = storageFolder.value.replace(/\/+$/, "");
-    if (!storageFolder.value.startsWith("/")) {
-        storageFolder.value = "/" + storageFolder.value;
-    }
 
-    if (password.value !== password.dataset.stored) {
-        password.value = await convertPassword();
-    }
-
-    // Store account data
-    await browser.storage.local.set({
-        [accountId]:
+    // Copy data into a connection object
+    const ncc = new NextcloudConnection(accountId,
         {
             serverUrl: serverUrl.value,
             username: username.value,
@@ -177,14 +152,26 @@ saveButton.onclick = async () => {
             storageFolder: storageFolder.value,
             useDlPassword: useDlPassword.checked,
             downloadPassword: downloadPassword.value,
-        },
-    });
-    await browser.cloudFile.updateAccount(accountId, {
+        });
+
+    // If user typed new password, try to convert it into app password
+    if (password.value !== password.dataset.stored) {
+        const data = await ncc.getAppPasswort();
+        if (data && data.apppassword) {
+            password.value = data.apppassword;
+        }
+    }
+
+    // Store account data
+    ncc.store();
+
+    browser.cloudFile.updateAccount(accountId, {
         configured: true,
         // Default upload limit of Nextcloud
         uploadSizeLimit: 512 * 1024 * 1024,
     });
 
+    // Re-activate form
     for (const elementId in states) {
         document.getElementById(elementId).disabled = states[elementId];
     }

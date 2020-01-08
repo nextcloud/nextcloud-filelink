@@ -16,6 +16,7 @@
     },
     "background": {
         "scripts": [
+            "nextcloudconnection.js",
             "background.js"
         ]
     },

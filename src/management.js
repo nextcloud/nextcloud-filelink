@@ -140,9 +140,8 @@ saveButton.onclick = async () => {
     }
     serverUrl.value = serverUrl.value.replace(/\/+$/, "");
 
-    storageFolder.value = "/" + storageFolder.value;
-    storageFolder.value = storageFolder.value.replace(/\/+$/, "");
-
+    storageFolder.value = "/" + storageFolder.value.split('/').filter(e => "" !== e).join('/');
+    
     // Copy data into a connection object
     const ncc = new NextcloudConnection(accountId,
         {

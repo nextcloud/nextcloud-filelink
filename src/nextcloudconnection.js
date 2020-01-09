@@ -29,7 +29,8 @@ const apiBaseUrl = "/ocs/v2.php";
 const userInfoUrl = "/cloud/users/";
 const shareApiUrl = "/apps/files_sharing/api/v1/shares";
 const appPasswordUrl = "/core/getapppassword";
-const davBaseUrl = "/remote.php/dav/files/";
+const capabilitiesUrl = "/cloud/capabilities";
+const defaultDavUrl = "/remote.php/dav/files/";
 
 /**
  * Some Utility function
@@ -208,9 +209,18 @@ class NextcloudConnection {
         uploads.set(fileId, uploadInfo);
 
         //  Upload URL
+        if (!this._davUrl) {
+            // Fetch URL from capabilities
+            let data = await this._doApiCall(capabilitiesUrl);
+            if (data && data.capabilities && data.capabilities.core && data.capabilities.core["webdav-root"]) {
+                this._davUrl = "/" + data.capabilities.core["webdav-root"];
+            } else {
+                this._davUrl = defaultDavUrl + this._username;
+            }
+        }
+
         let url = this._serverurl;
-        url += davBaseUrl;
-        url += this._username;
+        url += this._davUrl;
         url += utils.encodepath(this._storageFolder);
         url += '/' + utils.encodepath(fileName);
 
@@ -377,9 +387,18 @@ class NextcloudConnection {
             headers: this._davHeaders,
         };
 
+        if (!this._davUrl) {
+            // Fetch URL from capabilities
+            let data = await this._doApiCall(capabilitiesUrl);
+            if (data && data.capabilities && data.capabilities.core && data.capabilities.core["webdav-root"]) {
+                this._davUrl = "/" + data.capabilities.core["webdav-root"];
+            } else {
+                this._davUrl = defaultDavUrl + this._username;
+            }
+        }
+
         let url = this._serverurl;
-        url += davBaseUrl;
-        url += this._username;
+        url += this._davUrl;
         url += path;
 
         return Promise.race([

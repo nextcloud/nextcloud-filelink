@@ -154,8 +154,10 @@ saveButton.onclick = async () => {
             downloadPassword: downloadPassword.value,
         });
 
-    // If user typed new password, try to convert it into app password
-    if (password.value !== password.dataset.stored) {
+    // If user typed new password, username or URL try to convert it into app password
+    if (password.value !== password.dataset.stored ||
+        username.value !== username.dataset.stored ||
+        serverUrl.value !== serverUrl.dataset.stored) {
         password.value = await ncc.convertToApppassword();
     }
 

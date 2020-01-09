@@ -128,9 +128,13 @@ class NextcloudConnection {
      * the current password with it
      */
     async convertToApppassword() {
-        const data = await this._doApiCall(appPasswordUrl, "GET");
-        if (data && data.apppassword) {
-            this._password = data.apppassword;
+        try {
+            const data = await this._doApiCall(appPasswordUrl, "GET");
+            if (data && data.apppassword) {
+                this._password = data.apppassword;
+            }
+        } catch (error) {
+            // Ignore any errors because we can still use the password from the form            
         }
         return this._password;
     }

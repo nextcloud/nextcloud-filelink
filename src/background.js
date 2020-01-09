@@ -40,7 +40,8 @@ browser.cloudFile.onFileUpload.addListener(async (account, { id, name, data }) =
 });
 
 browser.cloudFile.onFileUploadAbort.addListener(
-    // So far we don't need a configured connection for this, so just set the static method as handler
+    // So far we don't need a configured connection for this, so just set the
+    // static method as handler
     (account, id) => NextcloudConnection.abortUpload(id));
 
 browser.cloudFile.onFileDeleted.addListener(async (account, id) => {

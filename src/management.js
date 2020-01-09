@@ -96,7 +96,8 @@ async function setStoredData() {
 }
 
 /** 
- * Handler for input event of all inputs: Only activate the buttons, if the form input is OK
+ * Handler for input event of all inputs: Only activate the buttons, if the form
+ * input is OK
  */
 function activateButtons() {
     if (accountForm.checkValidity()) {
@@ -141,7 +142,7 @@ saveButton.onclick = async () => {
     serverUrl.value = serverUrl.value.replace(/\/+$/, "");
 
     storageFolder.value = "/" + storageFolder.value.split('/').filter(e => "" !== e).join('/');
-    
+
     // Copy data into a connection object
     const ncc = new NextcloudConnection(accountId,
         {

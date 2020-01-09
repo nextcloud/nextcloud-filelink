@@ -1,3 +1,8 @@
+2.0.6 2020-01-09
+- Fix #17: Preferences panel blocks on network errors
+- Fix #18: Upload error for nextcloud accounts with external auth
+- Fix #21: Doesn't get app password if username or url changed
+
 2.0.5 2020-01-09
 - Fix #11: Adds extra / at beginning of folder path
 - Fix #14: Stores PW instead of app password

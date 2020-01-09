@@ -118,10 +118,14 @@ class NextcloudConnection {
     }
 
     /**
-     * Fetches a new app password from the Nextcloud web service
+     * Fetches a new app password from the Nextcloud web service and replaces the current password with it
      */
-    async getAppPasswort() {
-        return this._doApiCall(appPasswordUrl, "GET");
+    async convertToApppassword() {
+        const data = await this._doApiCall(appPasswordUrl, "GET");
+        if (data && data.apppassword) {
+            this._password = data.apppassword;
+        }
+        return this._password;
     }
 
     /**

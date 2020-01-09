@@ -37,9 +37,10 @@ const davBaseUrl = "/remote.php/dav/files/";
 class utils {
     /**
      * Timeout as a Promise
-     * 
+     *
      * @param {number} seconds - The timeout to use in seconds
-     * @returns {Object} - A promise that rejects after the requested number of seconds
+     * @returns {Object} - A promise that rejects after the requested number of
+     * seconds
      */
     static timeout(seconds) {
         return new Promise(function (resolve, reject) {
@@ -48,8 +49,8 @@ class utils {
     }
 
     /**
-     * encodeURIComponent leaves some components unencoded, but / has to be itself
-     * 
+     * encodeURI leaves some components unencoded, so we replace them manually
+     *
      * @param {string} aStr 
      * @returns {string}
      */
@@ -65,8 +66,9 @@ class utils {
  */
 class NextcloudConnection {
     /**
-     * Creates an object for communication with a Nextcloud instance. To use it before account data is stored, supply all the optional parameters.
-     * 
+     * Creates an object for communication with a Nextcloud instance. To use it
+     * before account data is stored, supply all the optional parameters.
+     *
      * @param {*} accountId - Whatever Thunderbird uses as an account identifier
      * @param {*} settings - An object containing all settings
      */
@@ -80,17 +82,17 @@ class NextcloudConnection {
     }
 
     /**
-     * Gets free/used space from web service and sets the parameters in Thunderbirds cloudFileAccount
+     * Gets free/used space from web service and sets the parameters in
+     * Thunderbirds cloudFileAccount
      */
     async updateStorageInfo() {
-        this._doApiCall(userInfoUrl + this._username, 'GET').
-            then(data => browser.cloudFile.updateAccount(this._accountId,
+        this._doApiCall(userInfoUrl + this._username, 'GET')
+            .then(data => browser.cloudFile.updateAccount(this._accountId,
                 {
                     spaceRemaining: data.free >= 0 ? data.free : -1,
                     spaceUsed: data.used > 0 ? data.used : -1,
                 })
             );
-
     }
 
     /**
@@ -111,14 +113,16 @@ class NextcloudConnection {
     }
 
     /**
-     * Sets the configured property of Thunderbird's cloudFileAccount according to actual state
+     * Sets the "configured" property of Thunderbird's cloudFileAccount
+     * according to actual state
      */
     async updateConfigured() {
         browser.cloudFile.updateAccount(this._accountId, { configured: this._complete, });
     }
 
     /**
-     * Fetches a new app password from the Nextcloud web service and replaces the current password with it
+     * Fetches a new app password from the Nextcloud web service and replaces
+     * the current password with it
      */
     async convertToApppassword() {
         const data = await this._doApiCall(appPasswordUrl, "GET");
@@ -135,7 +139,8 @@ class NextcloudConnection {
      */
     async deleteFile(fileId) {
         const uploadInfo = uploads.get(fileId);
-        // If we don't have enough information about this upload, we can't delete it.
+        // If we don't have enough information about this upload, we can't
+        // delete it.
         if (!uploadInfo || !("name" in uploadInfo) || !uploadInfo.name) {
             return;
         }
@@ -146,8 +151,9 @@ class NextcloudConnection {
     }
 
     /**
-     * Internal utility to create a complete folder path, returns true if that path already exists
-     * 
+     * Internal utility to create a complete folder path, returns true if that
+     * path already exists
+     *
      * @param {string} folder 
      */
     async _recursivelyCreateFolder(folder) {
@@ -174,15 +180,15 @@ class NextcloudConnection {
 
     /**
      * Upload a single file
-     * 
+     *
      * @param {number} fileId - The id Thunderbird uses to reference the upload
      * @param {string} fileName - w/o path
      * @param {*} body - File contents
      */
     async uploadFile(fileId, fileName, body) {
-        // Make sure storageFolder exists Creation implicitly checks for existence
-        // of folder, so the extra webservice call for checking first isn't
-        // necessary.
+        // Make sure storageFolder exists. Creation implicitly checks for
+        // existence of folder, so the extra webservice call for checking first
+        // isn't necessary.
         const foldersOK = await this._recursivelyCreateFolder(this._storageFolder);
         if (!foldersOK) {
             throw new Error("Upload failed: Can't create folder");
@@ -237,7 +243,7 @@ class NextcloudConnection {
 
     /**
      * Abort a running upload
-     * 
+     *
      * @param {number} fileId - Thunderbird's upload reference number
      */
     static abortUpload(fileId) {
@@ -256,8 +262,9 @@ class NextcloudConnection {
 
     /**
      * Internal function to load properties with values
-     * 
-     * @param {Object} settings - An object containing settings for all properties
+     *
+     * @param {Object} settings - An object containing settings for all
+     * properties
      */
     _init(settings) {
         this._complete = true;
@@ -293,9 +300,6 @@ class NextcloudConnection {
             "Authorization": auth,
             "User-Agent": "Filelink for Nextcloud",
         };
-
-
-
     }
 
     /**
@@ -311,12 +315,14 @@ class NextcloudConnection {
 
     /**
      * Call a function of the Nextcloud web service API
-     * 
+     *
      * @param {string} suburl - The function's URL relative to the API base URL
      * @param {string} [method='GET'] - HTTP method of the function
-     * @param {Object} [additional_headers] - Additional Headers this function needs
+     * @param {Object} [additional_headers] - Additional Headers this function
+     * needs
      * @param {string} [body] - Request body if the function needs it
-     * @returns {Object} - A Promise that resolves to the data element of the response
+     * @returns {Object} - A Promise that resolves to the data element of the
+     * response
      */
     async _doApiCall(suburl, method, additional_headers, body) {
         if (!this._complete) {
@@ -349,7 +355,7 @@ class NextcloudConnection {
 
     /**
      * Calls one function of the WebDAV service
-     * 
+     *
      * @param {string} path - the full file path of the object
      * @param {string} [method=GET] - the HTTP METHOD to use
      * @returns {number} - The HTTP status of the response

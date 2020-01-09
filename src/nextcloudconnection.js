@@ -87,12 +87,15 @@ class NextcloudConnection {
      */
     async updateStorageInfo() {
         this._doApiCall(userInfoUrl + this._username, 'GET')
-            .then(data => browser.cloudFile.updateAccount(this._accountId,
-                {
-                    spaceRemaining: data.free >= 0 ? data.free : -1,
-                    spaceUsed: data.used > 0 ? data.used : -1,
-                })
-            );
+            .then(data => {
+                if (data && data.quota) {
+                    browser.cloudFile.updateAccount(this._accountId,
+                        {
+                            spaceRemaining: data.quota.free >= 0 ? data.quota.free : -1,
+                            spaceUsed: data.quota.used > 0 ? data.quota.used : -1,
+                        });
+                }
+            });
     }
 
     /**

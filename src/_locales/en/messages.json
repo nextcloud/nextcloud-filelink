@@ -1,9 +1,9 @@
 {
   "extensionDescription": {
-    "message": "Upload large attachments to your Nextcloud instead of sending them by email"
+    "message": "Upload large attachments to your Cloud and send the link  by email"
   },
   "extensionName": {
-    "message": "FileLink Provider for Nextcloud"
+    "message": "*cloud - FileLink for Nextcloud and ownCloud"
   },
   "saveButton": {
     "message": "Save"
@@ -18,31 +18,31 @@
     "message": "Server URL"
   },
   "serverUrl_details": {
-    "message": "The base URL of the Nextcloud server, must start with http or https. If your server runs on a non-standard port, put it into the URL."
+    "message": "The base URL of the Cloud server, must start with http or https.<br>If your server runs on a non-standard port, put it into the URL."
   },
   "username": {
     "message": "Username"
   },
   "username_details": {
-    "message": "Your username on your Nextcloud server"
+    "message": "Your username on your Cloud server"
   },
   "password": {
     "message": "App token or password"
   },
   "password_details": {
-    "message": "An app token (preferable) or password. The Add-On tries to convert it into an app token before storing it. But if that fails, your password is stored unencrypted."
+    "message": "An app token (preferable) or password.<br><em>With Nextcloud only</em>the Add-On tries to convert a user password into an app token before storing it. But if that fails, your <em>password is stored unencrypted</em>."
   },
   "storageFolder": {
-    "message": "Storage path in Nextcloud"
+    "message": "Storage path in Cloud"
   },
   "storageFolder_details": {
-    "message": "The path where the files are stored in your Nextcloud (must begin with a '/')"
+    "message": "The path where attachments will be are stored in your Cloud. If it doesn't exits, it's created during upload."
   },
   "useDlPassword": {
     "message": "Password protect downloads:"
   },
   "useDlPassword_details": {
-    "message": "This password must comply to the rules the admin of your Nextcloud enforces (eg. length, character set, ...). Otherwise the upload will fail. Tell this password to the recipients; they will need it to download the attachment."
+    "message": "This password must comply to the rules the admin of your Cloud enforces (eg. length, character set, ...). Otherwise the <em>upload</em> will fail. Tell this password to the recipients; they will need it to download the attachment."
   },
   "freespace": {
     "message": "Free Space ($FREE$ of $FULL$)",

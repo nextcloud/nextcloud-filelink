@@ -19,14 +19,14 @@ COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
 IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. */
 
-/* global NextcloudConnection */
+/* global CloudConnection */
 
 /** Whenever TB starts, all the providers are in state configured:false */
 (() => {
     browser.storage.local.get().then(
         allAccounts => {
             for (const accountId in allAccounts) {
-                const ncc = new NextcloudConnection(accountId);
+                const ncc = new CloudConnection(accountId);
                 ncc.setup()
                     .then(() => ncc.updateConfigured())
                     .then(() => ncc.updateStorageInfo());
@@ -35,17 +35,17 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. */
 })();
 
 browser.cloudFile.onFileUpload.addListener(async (account, { id, name, data }) => {
-    const ncc = new NextcloudConnection(account.id);
+    const ncc = new CloudConnection(account.id);
     return ncc.setup().then(() => ncc.uploadFile(id, name, data));
 });
 
 browser.cloudFile.onFileUploadAbort.addListener(
     // So far we don't need a configured connection for this, so just set the
     // static method as handler
-    (account, id) => NextcloudConnection.abortUpload(id));
+    (account, id) => CloudConnection.abortUpload(id));
 
 browser.cloudFile.onFileDeleted.addListener(async (account, id) => {
-    const ncc = new NextcloudConnection(account.id);
+    const ncc = new CloudConnection(account.id);
     ncc.setup().then(() => ncc.deleteFile(id));
 });
 
@@ -53,6 +53,6 @@ browser.cloudFile.onFileDeleted.addListener(async (account, id) => {
 // browser.cloudFile.onAccountAdded.addListener(async account => { */
 
 browser.cloudFile.onAccountDeleted.addListener(async accountId => {
-    const ncc = new NextcloudConnection(accountId);
+    const ncc = new CloudConnection(accountId);
     ncc.setup().then(() => ncc.deleteAccount());
 });

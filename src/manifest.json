@@ -2,7 +2,7 @@
     "manifest_version": 2,
     "applications": {
         "gecko": {
-            "id": "filelink@johannes-endres.de",
+            "id": "cloud@johannes-endres.de",
             "strict_min_version": "68.0"
         }
     },

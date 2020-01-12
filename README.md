@@ -21,10 +21,11 @@ Information for
 
 ### Installation
 
-__*cloud__ will shortly be available from
-https://addons.thunderbird.net/de/thunderbird/. Until then download the [XPI
-file](https://gitlab.com/joendres/filelink-nextcloud/raw/master/web-ext-artifacts/cloud_-_filelink_for_nextcloud_and_owncloud-3.0.0.xpi)
-and install it manually.
+__*cloud__ is available via [Thunderbird's Add-on
+repository](https://addons.thunderbird.net/thunderbird/addon/filelink-nextcloud-owncloud/).
+1. Install it directly from the Add-ons management within Thunderbird.
+1. Go to Settings -> Attachments -> Sending to configure your Nextcloud or
+   ownCloud account.
 
 ### Password vs. App Token
 

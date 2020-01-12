@@ -25,7 +25,7 @@ var uploads = new Map();
 /** Configurable options and useful constants */
 const apiTimeout = 3; // seconds
 
-const apiBaseUrl = "/ocs/v2.php";
+const apiBaseUrl = "/ocs/v1.php";
 const userInfoUrl = "/cloud/users/";
 const shareApiUrl = "/apps/files_sharing/api/v1/shares";
 const appPasswordUrl = "/core/getapppassword";
@@ -33,45 +33,27 @@ const capabilitiesUrl = "/cloud/capabilities";
 const defaultDavUrl = "/remote.php/dav/files/";
 
 /**
- * Some Utility function
+ * encodeURI leaves some components unencoded, so we replace them manually
+ *
+ * @param {string} aStr 
+ * @returns {string}
  */
-class utils {
-    /**
-     * Timeout as a Promise
-     *
-     * @param {number} seconds - The timeout to use in seconds
-     * @returns {Object} - A promise that rejects after the requested number of
-     * seconds
-     */
-    static timeout(seconds) {
-        return new Promise(function (resolve, reject) {
-            setTimeout(() => reject(new Error("Timeout")), seconds * 1000);
-        });
-    }
-
-    /**
-     * encodeURI leaves some components unencoded, so we replace them manually
-     *
-     * @param {string} aStr 
-     * @returns {string}
-     */
-    static encodepath(aStr) {
-        return encodeURI(aStr)
-            .replace(/[,?:@&=+$#!'()*]/g,
-                match => ('%' + match.charCodeAt(0).toString(16).toUpperCase()));
-    }
+function encodepath(aStr) {
+    return encodeURI(aStr)
+        .replace(/[,?:@&=+$#!'()*]/g,
+            match => ('%' + match.charCodeAt(0).toString(16).toUpperCase()));
 }
 
 /**
- * Encapsulates all calls to the Nextcloud web services (API and DAV)
+ * This class encapsulates all calls to the Nextcloud or ownCloud web services (API and DAV)
  */
-class NextcloudConnection {
+class CloudConnection {
     /**
-     * Creates an object for communication with a Nextcloud instance. To use it
+     * Creates an object for communication with a Nextcloud/ownCloud instance. To use it
      * before account data is stored, supply all the optional parameters.
      *
-     * @param {*} accountId - Whatever Thunderbird uses as an account identifier
-     * @param {*} settings - An object containing all settings
+     * @param {*} accountId Whatever Thunderbird uses as an account identifier
+     * @param {*} [settings] An object containing all settings
      */
     constructor(accountId, settings) {
         this._accountId = accountId;
@@ -87,7 +69,7 @@ class NextcloudConnection {
      * Thunderbirds cloudFileAccount
      */
     async updateStorageInfo() {
-        this._doApiCall(userInfoUrl + this._username, 'GET')
+        this._doApiCall(userInfoUrl + this._username)
             .then(data => {
                 if (data && data.quota) {
                     browser.cloudFile.updateAccount(this._accountId,
@@ -125,12 +107,13 @@ class NextcloudConnection {
     }
 
     /**
-     * Fetches a new app password from the Nextcloud web service and replaces
+     * Fetches a new app password from the Nextcloud/ownCloud web service and replaces
      * the current password with it
      */
     async convertToApppassword() {
         try {
-            const data = await this._doApiCall(appPasswordUrl, "GET");
+            const data = await this._doApiCall(appPasswordUrl);
+
             if (data && data.apppassword) {
                 this._password = data.apppassword;
             }
@@ -143,7 +126,7 @@ class NextcloudConnection {
     /**
      * Deletes a file uploaded in the same Thunderbird session
      *
-     * @param {number} fileId - Thunderbird's internal file id
+     * @param {number} fileId Thunderbird's internal file id
      */
     async deleteFile(fileId) {
         const uploadInfo = uploads.get(fileId);
@@ -153,14 +136,19 @@ class NextcloudConnection {
             return;
         }
 
-        this._doDavCall(utils.encodepath(this._storageFolder) + '/' + utils.encodepath(uploadInfo.name), 'DELETE')
-            .then(this.updateStorageInfo())
-            .then(uploads.delete(fileId));
+        let path = encodepath(this._storageFolder + '/' + uploadInfo.name);
+        // Check if file is shared
+        let data = await this._doApiCall(shareApiUrl + '?path=' + path);
+        // It's either not shared at all or just once (by us)
+        if (!data || data.length === 1) {
+            this._doDavCall(path, 'DELETE')
+                .then(this.updateStorageInfo())
+                .then(uploads.delete(fileId));
+        }
     }
 
     /**
-     * Internal utility to create a complete folder path, returns true if that
-     * path already exists
+     * Create a complete folder path, returns true if that  path already exists
      *
      * @param {string} folder 
      */
@@ -169,7 +157,9 @@ class NextcloudConnection {
         if ("/" === folder) {
             return false;
         } else {
-            switch (await this._doDavCall(utils.encodepath(folder), 'MKCOL')) {
+            let response = await this._doDavCall(encodepath(folder), 'MKCOL')
+                .catch(e => { return { status: 666, }; });
+            switch (response.status) {
                 case 405: // Already exists
                 case 201: // Created successfully
                     return true;
@@ -177,10 +167,11 @@ class NextcloudConnection {
                     // Try to create parent folder
                     if (await this._recursivelyCreateFolder(folder.split("/").slice(0, -1).join("/"))) {
                         // Try again to create the initial folder
-                        return (201 === await this._doDavCall(utils.encodepath(folder), 'MKCOL'));
+                        response = await this._doDavCall(encodepath(folder), 'MKCOL')
+                            .catch(e => { return { status: 666, }; });
+                        return (201 === response.status);
                     }
                     break;
-                default: break;
             }
         }
         return false;
@@ -189,16 +180,15 @@ class NextcloudConnection {
     /**
      * Upload a single file
      *
-     * @param {number} fileId - The id Thunderbird uses to reference the upload
-     * @param {string} fileName - w/o path
-     * @param {*} body - File contents
+     * @param {number} fileId The id Thunderbird uses to reference the upload
+     * @param {string} fileName w/o path
+     * @param {*} body File contents
      */
     async uploadFile(fileId, fileName, body) {
         // Make sure storageFolder exists. Creation implicitly checks for
         // existence of folder, so the extra webservice call for checking first
         // isn't necessary.
-        const foldersOK = await this._recursivelyCreateFolder(this._storageFolder);
-        if (!foldersOK) {
+        if (!(await this._recursivelyCreateFolder(this._storageFolder))) {
             throw new Error("Upload failed: Can't create folder");
         }
 
@@ -208,38 +198,24 @@ class NextcloudConnection {
         };
         uploads.set(fileId, uploadInfo);
 
-        //  Upload URL
-        if (!this._davUrl) {
-            // Fetch URL from capabilities
-            let data = await this._doApiCall(capabilitiesUrl);
-            if (data && data.capabilities && data.capabilities.core && data.capabilities.core["webdav-root"]) {
-                this._davUrl = "/" + data.capabilities.core["webdav-root"];
-            } else {
-                this._davUrl = defaultDavUrl + this._username;
-            }
-        }
+        let fullpath = encodepath(this._storageFolder + '/' + fileName);
+        let response = await this._doDavCall(fullpath, "PUT", body, uploadInfo.abortController)
+            .catch(e => {
+                if ("AbortError" === e.name) {
+                    return { aborted: true, url: "", };
+                } else {
+                    throw e;
+                }
+            })
+            .finally(delete uploadInfo.abortController);
 
-        let url = this._serverurl;
-        url += this._davUrl;
-        url += utils.encodepath(this._storageFolder);
-        url += '/' + utils.encodepath(fileName);
-
-        let fetchInfo = {
-            method: "PUT",
-            headers: this._davHeaders,
-            body,
-            signal: uploadInfo.abortController.signal,
-        };
-
-        let response = await fetch(url, fetchInfo);
-
-        delete uploadInfo.abortController;
-
-        if (response.ok) {
+        if (response.aborted) {
+            return response;
+        } else if (response.ok) {
             this.updateStorageInfo();
 
             // Create share link
-            let shareFormData = "path=" + utils.encodepath(this._storageFolder + "/" + fileName);
+            let shareFormData = "path=" + encodepath(this._storageFolder + "/" + fileName);
             shareFormData = "" + shareFormData + "&shareType=3"; // 3 = public share
 
             if (this._useDlPassword) {
@@ -248,10 +224,9 @@ class NextcloudConnection {
 
             let data = await this._doApiCall(shareApiUrl, 'POST', { "Content-Type": "application/x-www-form-urlencoded", }, shareFormData);
             if (data && data.url) {
-                return { url: data.url, };
+                return { url: data.url, aborted: false, };
             }
             else {
-                // We might want to delete the file
                 throw new Error("Sharing failed.");
             }
         }
@@ -261,7 +236,7 @@ class NextcloudConnection {
     /**
      * Abort a running upload
      *
-     * @param {number} fileId - Thunderbird's upload reference number
+     * @param {number} fileId Thunderbird's upload reference number
      */
     static abortUpload(fileId) {
         const uploadInfo = uploads.get(fileId);
@@ -280,7 +255,7 @@ class NextcloudConnection {
     /**
      * Internal function to load properties with values
      *
-     * @param {Object} settings - An object containing settings for all
+     * @param {*} settings An object containing settings for all
      * properties
      */
     _init(settings) {
@@ -308,14 +283,14 @@ class NextcloudConnection {
 
         this._davHeaders = {
             "Authorization": auth,
-            "User-Agent": "Filelink for Nextcloud",
+            "User-Agent": "Filelink for *cloud",
             "Content-Type": "application/octet-stream",
         };
 
         this._apiHeaders = {
             "OCS-APIREQUEST": "true",
             "Authorization": auth,
-            "User-Agent": "Filelink for Nextcloud",
+            "User-Agent": "Filelink for *cloud",
         };
     }
 
@@ -331,14 +306,14 @@ class NextcloudConnection {
     }
 
     /**
-     * Call a function of the Nextcloud web service API
+     * Call a function of the Nextcloud/ownCloud web service API
      *
-     * @param {string} suburl - The function's URL relative to the API base URL
-     * @param {string} [method='GET'] - HTTP method of the function
-     * @param {Object} [additional_headers] - Additional Headers this function
+     * @param {string} suburl The function's URL relative to the API base URL
+     * @param {string} [method='GET'] HTTP method of the function, default GET
+     * @param {*} [additional_headers] Additional Headers this function
      * needs
-     * @param {string} [body] - Request body if the function needs it
-     * @returns {Object} - A Promise that resolves to the data element of the
+     * @param {string} [body] Request body if the function needs it
+     * @returns {*} A Promise that resolves to the data element of the
      * response
      */
     async _doApiCall(suburl, method, additional_headers, body) {
@@ -346,46 +321,51 @@ class NextcloudConnection {
             throw new Error("Account not configured");
         }
 
+        let url = this._serverurl;
+        url += apiBaseUrl;
+        url += suburl;
+        url += (suburl.includes('?') ? '&' : '?') + "format=json";
+
         let fetchInfo = {
             method: method ? method : 'GET',
             headers: additional_headers ? { ...this._apiHeaders, ...additional_headers, } : this._apiHeaders,
         };
         if (undefined !== body) {
-            fetchInfo = { ...fetchInfo, body, };
+            fetchInfo.body = body;
         }
+        let controller = new AbortController();
+        let timeout = setTimeout(() => controller.abort(), 1000 * apiTimeout);
+        fetchInfo.signal = controller.signal;
 
-        let url = this._serverurl;
-        url += apiBaseUrl;
-        url += suburl;
-        url += "?format=json";
-
-        let response = await Promise.race([
-            fetch(url, fetchInfo),
-            utils.timeout(apiTimeout),
-        ]);
-        if (response.ok) {
-            let parsed = await response.json();
-            return (parsed && parsed.ocs && parsed.ocs.data) ? parsed.ocs.data : undefined;
-        }
-        return undefined;
+        return fetch(url, fetchInfo)
+            .then(clearTimeout(timeout))
+            .then(response => response.json())
+            .then(
+                // json was parseable
+                parsed => (parsed && parsed.ocs && parsed.ocs.data) ? parsed.ocs.data : {},
+                // Problem parsing json?
+                e => {
+                    if (e.message.startsWith("JSON.parse")) {
+                        return {};
+                    } else {
+                        throw e;
+                    }
+                });
     }
 
     /**
      * Calls one function of the WebDAV service
      *
-     * @param {string} path - the full file path of the object
-     * @param {string} [method=GET] - the HTTP METHOD to use
-     * @returns {number} - The HTTP status of the response
+     * @param {string} path the full file path of the object
+     * @param {string} [method=GET] the HTTP METHOD to use, default GET
+     * @param {*} [body] Body of the request, eg. file contents
+     * @param {*} [abortController] An AbortController to abort the network transaction
+     * @returns {*}  A Promise that resolves to the Response object
      */
-    async _doDavCall(path, method) {
+    async _doDavCall(path, method, body, abortController) {
         if (!this._complete) {
             throw new Error("Account not configured");
         }
-
-        let fetchInfo = {
-            method,
-            headers: this._davHeaders,
-        };
 
         if (!this._davUrl) {
             // Fetch URL from capabilities
@@ -393,6 +373,7 @@ class NextcloudConnection {
             if (data && data.capabilities && data.capabilities.core && data.capabilities.core["webdav-root"]) {
                 this._davUrl = "/" + data.capabilities.core["webdav-root"];
             } else {
+                // Use default from docs instead
                 this._davUrl = defaultDavUrl + this._username;
             }
         }
@@ -401,11 +382,26 @@ class NextcloudConnection {
         url += this._davUrl;
         url += path;
 
-        return Promise.race([
-            fetch(url, fetchInfo),
-            utils.timeout(apiTimeout),
-        ]).then(response => {
-            return response.status;
-        });
+        // If an AbortController was given, use it ...
+        let controller = abortController;
+        let timeout;
+        if (!controller) {
+            // ... otherwise create one that handles the timeout
+            controller = new AbortController();
+            timeout = setTimeout(() => controller.abort(),
+                1000 * apiTimeout);
+        }
+
+        let fetchInfo = {
+            signal: controller.signal,
+            method,
+            headers: this._davHeaders,
+        };
+        if (body) {
+            fetchInfo.body = body;
+        }
+
+        return fetch(url, fetchInfo)
+            .then(clearTimeout(timeout));
     }
 }

@@ -19,7 +19,7 @@ COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
 IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. */
 
-/* global NextcloudConnection */
+/* global CloudConnection */
 
 let accountId = new URL(location.href).searchParams.get("accountId");
 let accountForm = document.querySelector("#accountForm");
@@ -39,12 +39,10 @@ let downloadPassword = document.querySelector("#downloadPassword");
 
     // Add localized strings
     for (const element of document.querySelectorAll("[data-message]")) {
-        element.textContent = browser.i18n.getMessage(element.dataset.message);
+        element.innerHTML = browser.i18n.getMessage(element.dataset.message);
     }
 
     // Add text from other sources
-    service_url.setAttribute("href", browser.runtime.getManifest().cloud_file.service_url);
-
     browser.cloudFile.getAccount(accountId).then(
         theAccount => {
             document.querySelector("#provider-name").textContent = theAccount.name;
@@ -144,7 +142,7 @@ saveButton.onclick = async () => {
     storageFolder.value = "/" + storageFolder.value.split('/').filter(e => "" !== e).join('/');
 
     // Copy data into a connection object
-    const ncc = new NextcloudConnection(accountId,
+    const ncc = new CloudConnection(accountId,
         {
             serverUrl: serverUrl.value,
             username: username.value,

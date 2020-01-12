@@ -15,6 +15,9 @@ header {
 h2 {
     margin-top: 0;
     margin-bottom: 0.2em;
+    overflow:hidden; 
+    white-space:nowrap; 
+    text-overflow: ellipsis;
 }
 
 input {

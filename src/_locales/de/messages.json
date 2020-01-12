@@ -1,6 +1,9 @@
 {
+  "extensionName": {
+    "message": "*cloud - FileLink für Nextcloud und ownCloud"
+  },
   "extensionDescription": {
-    "message": "Lade große Anhänge in deine Nextcloud, statt sie per Mail zu senden"
+    "message": "Lade große Anhänge in deine Cloud und sende den Link per Mail"
   },
   "saveButton": {
     "message": "Speichern"
@@ -15,31 +18,31 @@
     "message": "Server-URL"
   },
   "serverUrl_details": {
-    "message": "Die URL des Nextcloud-Servers, muss mit http oder https beginnen. Falls der Server auf einem ungewöhnlichen Port läuft, gehört die Portnummer mit in die URL."
+    "message": "Die URL des Cloud-Servers, muss mit http oder https beginnen.<br>Falls der Server auf einem ungewöhnlichen Port läuft, gehört die Portnummer mit in die URL."
   },
   "username": {
     "message": "Username"
   },
   "username_details": {
-    "message": "Der Username auf dem Nextcloud-Server"
+    "message": "Der Username auf dem Cloud-Server"
   },
   "password": {
     "message": "App-Token oder Passwort"
   },
   "password_details": {
-    "message": "Ein App Passwort (Einstellungen -> Sicherheit -> App Passwort auf der Nextcloud) oder notfalls dein Nextcloud-Passwort. Das Add-On versucht, vor dem Speichern ein App Passwort zu erzeugen. Aber falls das fehlschlägt, wir das Passwort unverschlüsselt gespeichert."
+    "message": "Ein App Passwort (Einstellungen -> Sicherheit -> App Passwort auf der Cloud) oder notfalls dein Cloud-Passwort.<br><em>Nur mit Nextcloud:</em> Das Add-On versucht, vor dem Speichern ein App Passwort zu erzeugen. Aber falls das fehlschlägt, wir das <em>Passwort unverschlüsselt gespeichert</em>."
   },
   "storageFolder": {
-    "message": "Speicherpfad in Nextcloud"
+    "message": "Speicherpfad in der Cloud"
   },
   "storageFolder_details": {
-    "message": "Das Verzeichnis, in dem die Dateien abgelegt werden. Falls es nicht existiert, wird es automatisch angelegt."
+    "message": "Das Verzeichnis, in dem die Dateien abgelegt werden. Falls es nicht existiert, wird es automatisch angelegt.<br><em>Dieses Verzeichnis sollte nur für Attachments verwendet werden, weil sonst Datenverlust droht!</em>"
   },
   "useDlPassword": {
     "message": "Downloads mit Passwort sichern:"
   },
   "useDlPassword_details": {
-    "message": "Dieses Passwort muss den Richtlinien entsprechen, die der Admin deiner Nextcloud aufgestellt hat (Länge, Zeichen, Ziffern, ...), sonst schlägt der Upload fehl. Das Passwort musst du den Empfängern deiner Anhänge gesondert mitteilen, da sie es für den Download benötigen."
+    "message": "Dieses Passwort muss den Richtlinien entsprechen, die der Admin deiner Cloud aufgestellt hat (Länge, Zeichen, Ziffern, ...), sonst schlägt der <em>Upload</em> fehl.<br>Das Passwort musst du den Empfängern deiner Anhänge gesondert mitteilen, da sie es für den Download benötigen."
   },
   "freespace": {
     "message": "Freier Speicher: $FREE$ GB von $FULL$ GB",

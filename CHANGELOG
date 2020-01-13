@@ -1,3 +1,8 @@
+3.1.0 2020-01-13
+- Don't upload file if it's already in the cloud
+- Use existing share link instead of generating new ones
+- Send url that immediately starts download
+
 3.0.0 2020-01-12
 - Support owncloud
 - Change name to *cloud

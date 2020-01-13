@@ -19,8 +19,8 @@ COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
 IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. */
 
-/** Map of all the uploads in the current Thunderbird session */
-var uploads = new Map();
+/** AbortControllers for all active uploads */
+var allAbortControllers = new Map();
 
 /** Configurable options and useful constants */
 const apiTimeout = 3; // seconds
@@ -124,33 +124,10 @@ class CloudConnection {
     }
 
     /**
-     * Deletes a file uploaded in the same Thunderbird session
-     *
-     * @param {number} fileId Thunderbird's internal file id
-     */
-    async deleteFile(fileId) {
-        const uploadInfo = uploads.get(fileId);
-        // If we don't have enough information about this upload, we can't
-        // delete it.
-        if (!uploadInfo || !("name" in uploadInfo) || !uploadInfo.name) {
-            return;
-        }
-
-        let path = encodepath(this._storageFolder + '/' + uploadInfo.name);
-        // Check if file is shared
-        let data = await this._doApiCall(shareApiUrl + '?path=' + path);
-        // It's either not shared at all or just once (by us)
-        if (!data || data.length === 1) {
-            this._doDavCall(path, 'DELETE')
-                .then(this.updateStorageInfo())
-                .then(uploads.delete(fileId));
-        }
-    }
-
-    /**
-     * Create a complete folder path, returns true if that  path already exists
+     * Create a complete folder path, returns true if that path already exists
      *
      * @param {string} folder 
+     * @returns {bool} if creation succeeded
      */
     async _recursivelyCreateFolder(folder) {
         // Looks clumsy, but *always* make sure recursion ends
@@ -178,13 +155,57 @@ class CloudConnection {
     }
 
     /**
-     * Upload a single file
-     *
-     * @param {number} fileId The id Thunderbird uses to reference the upload
-     * @param {string} fileName w/o path
-     * @param {*} body File contents
+     * Check if an identical file (by name, mtime and size) already exists in the cloud
+     * @param {File} file The File object of the local file to check
+     * @returns {boolean} true if there is an identical file in the cloud
      */
-    async uploadFile(fileId, fileName, body) {
+    async _existsInCloud(file) {
+        const response = await this._doDavCall(
+            encodepath(this._storageFolder + '/' + file.name), "PROPFIND");
+        // something with the right name exists ...
+        if (response.ok && response.status < 300) {
+            const xmlDoc = new DOMParser().parseFromString(await response.text(), 'application/xml');
+            // ... and it's a file ...
+            if (null === xmlDoc.getElementsByTagName("d:resourcetype")[0].firstChild) {
+                const d = new Date(xmlDoc.getElementsByTagName("d:getlastmodified")[0].textContent);
+                // ... and mtimes are less than a second apart ...
+                if (Math.abs(file.lastModified - d.getTime()) < 1000 &&
+                    //  ... and sizes are identical.
+                    file.size === Number(xmlDoc.getElementsByTagName("d:getcontentlength")[0].textContent)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Set the mtime, so later checks for identity with local file succeed
+     * @param {string} fileName The name of the file to change
+     * @param {number} newMtime The mtime to set ont the file as a unix timestamp (seconds)
+     */
+    async _setMtime(fileName, newMtime) {
+        const body =
+            `<d:propertyupdate xmlns:d="DAV:">
+                <d:set>
+                    <d:prop>
+                        <d:lastmodified>${newMtime}</d:lastmodified>
+                    </d:prop>
+                </d:set>
+            </d:propertyupdate>`;
+
+        this._doDavCall(encodepath(this._storageFolder + '/' + fileName),
+            "PROPPATCH", body);
+    }
+
+    /**
+     * 
+     * @param {number} fileId Thunderbird's internal file if
+     * @param {string} fileName The name in the cloud
+     * @param {File} fileObject The File object to upload
+     * @returns {Promise} A Promise that resolves to the http response
+     */
+    async _doUpload(fileId, fileName, fileObject) {
         // Make sure storageFolder exists. Creation implicitly checks for
         // existence of folder, so the extra webservice call for checking first
         // isn't necessary.
@@ -192,14 +213,19 @@ class CloudConnection {
             throw new Error("Upload failed: Can't create folder");
         }
 
-        let uploadInfo = {
-            name: fileName,
-            abortController: new AbortController(),
-        };
-        uploads.set(fileId, uploadInfo);
+        // Some bookkeeping to enable aborting upload
+        let abortController = new AbortController();
+        allAbortControllers.set(fileId, abortController);
 
         let fullpath = encodepath(this._storageFolder + '/' + fileName);
-        let response = await this._doDavCall(fullpath, "PUT", body, uploadInfo.abortController)
+        return this._doDavCall(fullpath, "PUT", fileObject, abortController)
+            .then(response => {
+                if (response.ok) {
+                    this._setMtime(fileName, fileObject.lastModified / 1000 | 0);
+                    this.updateStorageInfo();
+                }
+                return response;
+            })
             .catch(e => {
                 if ("AbortError" === e.name) {
                     return { aborted: true, url: "", };
@@ -207,14 +233,32 @@ class CloudConnection {
                     throw e;
                 }
             })
-            .finally(delete uploadInfo.abortController);
+            .finally(whatever => {
+                allAbortControllers.delete(fileId);
+                return whatever;
+            });
+    }
 
-        if (response.aborted) {
-            return response;
-        } else if (response.ok) {
-            this.updateStorageInfo();
+    /**
+     * Get a share link for the file, reusing an existing one with the same parameters
+     * @param {string} fileName The name of the file to share
+     * @returns {string} The share link
+     */
+    async _getShareLink(fileName) {
+        //  Check if the file is already shared ...
+        let shareinfo = await this._doApiCall(shareApiUrl + "?path=" + encodepath(this._storageFolder + "/" + fileName));
+        let existingShare = shareinfo.find(share =>
+            /// ... and if it's a public share ...
+            (share.share_type === 3) &&
+            // ... with the same password (if any) ...
+            // CAUTION: Nextcloud has password===null, ownCloud has password===undefined if no password is set
+            (this._useDlPassword ? share.password === this._downloadPassword : !share.password) &&
+            // ... and the same expiration date (as of *cloud 3.1.0: none)
+            (share.expiration === null));
 
-            // Create share link
+        if (existingShare && existingShare.url) {
+            return existingShare.url;
+        } else {
             let shareFormData = "path=" + encodepath(this._storageFolder + "/" + fileName);
             shareFormData = "" + shareFormData + "&shareType=3"; // 3 = public share
 
@@ -224,11 +268,34 @@ class CloudConnection {
 
             let data = await this._doApiCall(shareApiUrl, 'POST', { "Content-Type": "application/x-www-form-urlencoded", }, shareFormData);
             if (data && data.url) {
-                return { url: data.url, aborted: false, };
+                return data.url;
             }
             else {
                 throw new Error("Sharing failed.");
             }
+        }
+    }
+
+    /**
+     * Upload a single file
+     *
+     * @param {number} fileId The id Thunderbird uses to reference the upload
+     * @param {string} fileName w/o path
+     * @param {File} fileObject the local file as a File object
+     */
+    async uploadFile(fileId, fileName, fileObject) {
+        let response = {};
+
+        if (await this._existsInCloud(fileObject)) {
+            response = { ok: true, };
+        } else {
+            response = await this._doUpload(fileId, fileName, fileObject);
+        }
+
+        if (response.aborted) {
+            return response;
+        } else if (response.ok) {
+            return { url: (await this._getShareLink(fileName)) + "/download", aborted: false, };
         }
         throw new Error("Upload failed.");
     }
@@ -239,9 +306,9 @@ class CloudConnection {
      * @param {number} fileId Thunderbird's upload reference number
      */
     static abortUpload(fileId) {
-        const uploadInfo = uploads.get(fileId);
-        if (uploadInfo && uploadInfo.abortController) {
-            uploadInfo.abortController.abort();
+        const abortController = allAbortControllers.get(fileId);
+        if (abortController) {
+            abortController.abort();
         }
     }
 

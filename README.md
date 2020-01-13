@@ -15,7 +15,7 @@ Information for
   Nextcloud](https://github.com/nextcloud/server/wiki/Maintenance-and-Release-Schedule))
 * ownCloud: 10+ (older versions might work, but are [not supported by
   ownCloud](https://github.com/owncloud/core/wiki/maintenance-and-release-schedule)
-* Thunderbird: 68+ (60.4 ESR might work too, but has not been tested)
+* Thunderbird: 68+ (60.5+ might work, but has not been tested)
 
 ## User guide
 
@@ -46,17 +46,28 @@ __*cloud__. There are two ways to get such a token:
   reachable, timeout, wrong username, ...), the Add-On will *store your password
   unencrypted*.
 
+### Existing files are not uploaded again
+
+If you attach a file that's already in the attachments folder in your cloud,
+that file is not uploaded again. __*cloud__ uses the same method as the
+Nextcloud/ownCloud deskop clients to decide if the local and remote files are
+identical. Only if they differ, __*cloud__ uploads the new file contents.
+
+You can use this, if you want to share large (or many) files: Sync your
+attachments folder to a folder on your computer using the desktop client. If you
+then attach a synced file from your computer to a message, __*cloud__ will
+notice that it's already uploaded. This might not work with uploads from the
+mobile clients, but I haven't tested it.
+
 ### Known issues
 
 #### Existing files are overwritten with new contents
 
 If you upload a file with a name that already exists in the server directory,
 that file is overwritten with the contents of the local file. *Share links from
-previous mails stay active and point to the new file.* This even happens, if you
-choose a file from a different local directory (with the same file name),
-because all files are uploaded to the same server directory.
-
-There are plans to change this behavior, but that may take some time.
+previous mails stay active and point to the new file contents.* This even
+happens, if you choose a file from a different local directory (with the same
+file name), because all files are uploaded to the same server directory.
 
 **Workaround:** Use different local file names.
 
@@ -84,8 +95,8 @@ multiple accounts with different passwords.
 #### Old files are not deleted 
 
 Thunderbird and __*cloud__ don't know, if a shared file has been downloaded, so
-the cannot clean up obsolete files. So files are only deleted in one situation:
-if the attachment is removed from the mail message after upload.
+they cannot decide which files are obsolete. You have to clean up your
+attachments forder yourself, sorry.
 
 ## Cloud admin guide
 

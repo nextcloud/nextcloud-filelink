@@ -44,10 +44,10 @@ browser.cloudFile.onFileUploadAbort.addListener(
     // static method as handler
     (account, id) => CloudConnection.abortUpload(id));
 
-browser.cloudFile.onFileDeleted.addListener(async (account, id) => {
-    const ncc = new CloudConnection(account.id);
-    ncc.setup().then(() => ncc.deleteFile(id));
-});
+/** Don't delete any files because we want to reuse uploads. Just ignore the
+ * event by adding an empty listener because Thunderbird will show error
+ * messages if there is no listener. */
+browser.cloudFile.onFileDeleted.addListener(async () => { });
 
 /** Nothing to be done, so don't add a listener */
 // browser.cloudFile.onAccountAdded.addListener(async account => { */

@@ -89,7 +89,7 @@ If you attach a file from a SMB share, it's uploaded to the cloud and the share 
   and ownCloud, and your admin might have configured some different rules. 
 * If all uploads fail, it might be a problem with the settings in your Nextcloud or
   ownCloud (point your admin to the [Admin guide](#nextcloud-admin-guide)).
-* If the Add-On still fails, please check if it's a [known bug](-/boards). Feel free to open a new issue otherwise.
+* If the Add-On still fails, please check if it's a [known bug](https://gitlab.com/joendres/filelink-nextcloud/-/boards). Feel free to open a new issue otherwise.
 
 #### Old files are not deleted 
 

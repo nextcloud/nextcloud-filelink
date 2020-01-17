@@ -21,17 +21,18 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. */
 
 /* global CloudConnection */
 
-let accountId = new URL(location.href).searchParams.get("accountId");
-let accountForm = document.querySelector("#accountForm");
-let serverUrl = document.querySelector("#serverUrl");
-let username = document.querySelector("#username");
-let password = document.querySelector("#password");
-let storageFolder = document.querySelector("#storageFolder");
-let saveButton = document.querySelector("#saveButton");
-let resetButton = document.querySelector("#resetButton");
-let service_url = document.querySelector("#service_url");
-let useDlPassword = document.querySelector("#useDlPassword");
-let downloadPassword = document.querySelector("#downloadPassword");
+const accountId = new URL(location.href).searchParams.get("accountId");
+const accountForm = document.querySelector("#accountForm");
+const serverUrl = document.querySelector("#serverUrl");
+const username = document.querySelector("#username");
+const password = document.querySelector("#password");
+const storageFolder = document.querySelector("#storageFolder");
+const useDlPassword = document.querySelector("#useDlPassword");
+const downloadPassword = document.querySelector("#downloadPassword");
+const useExpiry = document.querySelector("#useExpiry");
+const expiryDays = document.querySelector("#expiryDays");
+const saveButton = document.querySelector("#saveButton");
+const resetButton = document.querySelector("#resetButton");
 
 (() => {
     // Fill in form fields
@@ -59,8 +60,8 @@ let downloadPassword = document.querySelector("#downloadPassword");
                 const meter = document.querySelector("#freespace");
                 meter.max = full;
                 meter.value = free;
-                meter.low = full / 20;
-                document.querySelector("#freespaceGauge").hidden = false;
+                meter.low = full / 10;
+                document.querySelector("#freespaceGauge").style.visibility = "visible";
             }
         });
 
@@ -76,6 +77,8 @@ let downloadPassword = document.querySelector("#downloadPassword");
 async function setStoredData() {
     downloadPassword.disabled = true;
     downloadPassword.required = false;
+    expiryDays.disabled = true;
+    expiryDays.required = false;
 
     const accountInfo = await browser.storage.local.get(accountId);
     if (accountId in accountInfo) {
@@ -90,6 +93,11 @@ async function setStoredData() {
         useDlPassword.dataset.stored = accountInfo[accountId].useDlPassword;
         downloadPassword.disabled = !useDlPassword.checked;
         downloadPassword.required = useDlPassword.checked;
+
+        useExpiry.checked = accountInfo[accountId].useExpiry;
+        useExpiry.dataset.stored = accountInfo[accountId].useExpiry;
+        expiryDays.disabled = !useExpiry.checked;
+        expiryDays.required = useExpiry.checked;
     }
 }
 
@@ -106,14 +114,20 @@ function activateButtons() {
     resetButton.disabled = false;
 }
 
+function linkDisabledToCheckbox(element, checkbox) {
+    checkbox.addEventListener("click", async () => {
+        element.disabled = !checkbox.checked;
+        element.required = !element.disabled;
+        // activateButtons();
+    });
+}
+
 /**
  *  enable/disable download password field according to checkbox state
  */
-useDlPassword.onclick = async () => {
-    downloadPassword.disabled = !useDlPassword.checked;
-    downloadPassword.required = !downloadPassword.disabled;
-    accountForm.checkValidity();
-};
+linkDisabledToCheckbox(downloadPassword, useDlPassword);
+
+linkDisabledToCheckbox(expiryDays, useExpiry);
 
 /** 
  * Handler for Cancel button, restores saved values
@@ -125,7 +139,8 @@ resetButton.onclick = async () => {
 
 /** Handler for Save button */
 saveButton.onclick = async () => {
-    document.getElementById("provider-management").classList.add('busy');
+    const provider_management = document.querySelector("#provider-management");
+    provider_management.classList.add('busy');
     saveButton.disabled = resetButton.disabled = true;
     let states = {};
     for (let element of document.querySelectorAll("input")) {
@@ -150,6 +165,8 @@ saveButton.onclick = async () => {
             storageFolder: storageFolder.value,
             useDlPassword: useDlPassword.checked,
             downloadPassword: downloadPassword.value,
+            useExpiry: useExpiry.checked,
+            expiryDays: expiryDays.value,
         });
 
     // If user typed new password, username or URL try to convert it into app password
@@ -170,5 +187,5 @@ saveButton.onclick = async () => {
     for (const elementId in states) {
         document.getElementById(elementId).disabled = states[elementId];
     }
-    document.getElementById("provider-management").classList.remove('busy');
+    provider_management.classList.remove('busy');
 };

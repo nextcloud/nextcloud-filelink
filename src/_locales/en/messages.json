@@ -44,6 +44,12 @@
   "useDlPassword_details": {
     "message": "This password must comply to the rules the admin of your Cloud enforces (eg. length, character set, ...). Otherwise the <em>upload</em> will fail. Tell this password to the recipients; they will need it to download the attachment."
   },
+  "expiryDaysBefore": {
+    "message": "Expire downloads after "
+  },
+  "expiryDaysAfter": {
+    "message": " days"
+  },
   "freespace": {
     "message": "Free Space ($FREE$ of $FULL$)",
     "placeholders": {

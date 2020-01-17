@@ -1,0 +1,41 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "options": {
+        "cwd": "${workspaceFolder}"
+    },
+    "tasks": [
+        {
+            "label": "web-ext: build zip",
+            "type": "shell",
+            "command": "web-ext build --overwrite-dest -s src",
+            "presentation": {
+                "echo": false,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": false,
+                "clear": false
+            },
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "web-ext: run in thunderbird",
+            "type": "shell",
+            "command": "web-ext run --browser-console -s src",
+            "windows": {
+                "options": {
+                    "env": {
+                        "WEB_EXT_FIREFOX": "C:\\Program Files\\Mozilla Thunderbird\\thunderbird.exe",
+                        "WEB_EXT_FIREFOX_PROFILE": "${env:APPDATA}\\Thunderbird\\Profiles\\plyesg2i.debug"
+                    }
+                }
+            },
+            "problemMatcher": []
+        }
+    ]
+}

@@ -37,7 +37,7 @@
   <header>
     <a id="service_url" tabindex="-1"><img id="logo" src="management.png" alt="*cloud Logo" /></a>
     <h2 id="provider-name">*cloud</h2>
-    <div id="freespaceGauge" hidden>
+    <div id="freespaceGauge">
       <label id="freespacelabel" for="freespace" data-message="freespace"></label>
       <span id="meterspan">
         <meter id="freespace" min="0" max="0" value="0">
@@ -95,6 +95,20 @@
         <p data-message="useDlPassword_details"></p>
       </details>
       <input id="downloadPassword" class="subinput" type="text" disabled tabindex="1" data-stored="" />
+    </div>
+    <div class="fullfield">
+      <span class="checkboxWithLabel">
+        <input id="useExpiry" type="checkbox" tabindex="1" data-stored="" />
+        <label for="useExpiry" data-message="expiryDaysBefore"></label>
+        <input class="sameline" type="number" id="expiryDays" min="1" step="1" value="7" data-stored="" tabindex="1"
+          disabled>
+        <span for="expiryDays" data-message="expiryDaysAfter"> </span>
+      </span>
+      <details>
+        <summary tabindex="-1" data-message="detailSummary"></summary>
+        <p data-message="expiry_details"></p>
+      </details>
+
     </div>
 
     <button id="saveButton" type="button" disabled tabindex="1" data-message="saveButton"></button>

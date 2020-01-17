@@ -27,16 +27,16 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. */
         allAccounts => {
             for (const accountId in allAccounts) {
                 const ncc = new CloudConnection(accountId);
-                ncc.setup()
+                ncc.load()
                     .then(() => ncc.updateConfigured())
-                    .then(() => ncc.updateStorageInfo());
+                    .then(() => ncc.updateFreeSpaceInfo());
             }
         });
 })();
 
 browser.cloudFile.onFileUpload.addListener(async (account, { id, name, data }) => {
     const ncc = new CloudConnection(account.id);
-    return ncc.setup().then(() => ncc.uploadFile(id, name, data));
+    return ncc.load().then(() => ncc.uploadFile(id, name, data));
 });
 
 browser.cloudFile.onFileUploadAbort.addListener(
@@ -54,5 +54,5 @@ browser.cloudFile.onFileDeleted.addListener(async () => { });
 
 browser.cloudFile.onAccountDeleted.addListener(async accountId => {
     const ncc = new CloudConnection(accountId);
-    ncc.setup().then(() => ncc.deleteAccount());
+    ncc.load().then(() => ncc.deleteAccount());
 });

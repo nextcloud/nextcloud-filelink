@@ -10,12 +10,14 @@
     "description": "__MSG_extensionDescription__",
     "homepage_url": "https://gitlab.com/joendres/filelink-nextcloud",
     "author": "Johannes Endres",
-    "version": "3.1.0",
+    "version": "3.2.0",
     "icons": {
         "48": "icon48.png"
     },
     "background": {
         "scripts": [
+            "utils.js",
+            "davuploader.js",
             "cloudconnection.js",
             "background.js"
         ]

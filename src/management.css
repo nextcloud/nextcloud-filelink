@@ -81,6 +81,11 @@ details summary {
     display: inline-block;
 }
 
+/* TODO Set correct width */
+.sameline{
+    width: 4em;
+}
+
 button {
     margin-top: 0.7em;
     padding: 0.5em 5em;
@@ -97,6 +102,7 @@ button {
 
 #freespaceGauge {
     margin-bottom: .5em;
+    visibility: hidden;
 }
 
 #freespacelabel {

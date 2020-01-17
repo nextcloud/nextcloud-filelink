@@ -1,0 +1,34 @@
+{
+    "jshint.options": {
+        "moz": true,
+        "esversion": 9,
+        "browser": true,
+        "predef": [
+            "browser",
+            "AbortController"
+        ],
+        "curly": true,
+        "eqeqeq": true,
+        "futurehostile": true,
+        "nocomma": true,
+        "strict": "implied",
+        "trailingcomma": true,
+        "undef": true,
+        "unused": true,
+        "-W098": true
+    },
+    "cSpell.words": [
+        "Geoff",
+        "Lankow",
+        "MKCOL",
+        "Nextcloud",
+        "Paroz",
+        "Uploader",
+        "Viguier",
+        "joendres",
+        "mtimes",
+        "webdav"
+    ],
+    "cSpell.language": "de,en",
+    "cSpell.allowCompoundWords": true
+}

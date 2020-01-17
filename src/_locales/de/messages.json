@@ -44,7 +44,13 @@
   "useDlPassword_details": {
     "message": "Dieses Passwort muss den Richtlinien entsprechen, die der Admin deiner Cloud aufgestellt hat (Länge, Zeichen, Ziffern, ...), sonst schlägt der <em>Upload</em> fehl.<br>Das Passwort musst du den Empfängern deiner Anhänge gesondert mitteilen, da sie es für den Download benötigen."
   },
-  "freespace": {
+  "expiryDaysBefore": {
+    "message": "Downloads verfügbar für "
+  },
+  "expiryDaysAfter": {
+    "message": " Tage"
+  },
+"freespace": {
     "message": "Freier Speicher: $FREE$ GB von $FULL$ GB",
     "placeholders": {
       "free": {

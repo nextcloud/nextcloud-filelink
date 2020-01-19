@@ -31,12 +31,13 @@ function encodepath(aStr) {
             match => ('%' + match.charCodeAt(0).toString(16).toUpperCase()));
 }
 
+/**
+ * Adds the given number of days to the current date and returns an ISO sting of
+ * that date
+ * @param {number} days Number of days to add
+ */
 function daysFromTodayIso(days) {
     const d = new Date();
-    d.setTime(d.getTime() + days * 24 * 60 * 60 * 1000);
-    return [
-        d.getFullYear(),
-        String(d.getMonth() + 1).padStart(2, "0"),
-        String(d.getDate()).padStart(2, "0"),
-    ].join("-");
+    d.setDate(d.getDate() + parseInt(days));
+    return d.toISOString().slice(0, 10);
 }

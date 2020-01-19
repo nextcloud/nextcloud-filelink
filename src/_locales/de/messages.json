@@ -50,7 +50,10 @@
   "expiryDaysAfter": {
     "message": " Tage"
   },
-"freespace": {
+  "expiry_details": {
+    "message": "Die Dauer für die der Download verfügbar bleibt, heute mitgezählt"
+  },
+  "freespace": {
     "message": "Freier Speicher: $FREE$ GB von $FULL$ GB",
     "placeholders": {
       "free": {

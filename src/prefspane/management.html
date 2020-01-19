@@ -29,7 +29,7 @@
 
   <title>*cloud</title>
   <link rel="stylesheet" type="text/css" href="management.css">
-  <script src="cloudconnection.js" defer></script>
+  <script src="../lib/cloudconnection.js" defer></script>
   <script src="management.js" defer=""></script>
 </head>
 
@@ -53,8 +53,7 @@
         <summary tabindex="-1" data-message="detailSummary"></summary>
         <p data-message="serverUrl_details"></p>
       </details>
-      <input id="serverUrl" type="url" pattern="https?://.*" required tabindex="1" placeholder="https://example.com"
-        data-stored="" />
+      <input id="serverUrl" type="url" pattern="https?://.*" required tabindex="1" placeholder="https://example.com" />
     </div>
 
     <div class="fullfield">
@@ -63,7 +62,7 @@
         <summary tabindex="-1" data-message="detailSummary"></summary>
         <p data-message="username_details"></p>
       </details>
-      <input id="username" type="text" required tabindex="1" data-stored="" />
+      <input id="username" type="text" required tabindex="1" />
     </div>
 
     <div class="fullfield">
@@ -72,36 +71,35 @@
         <summary tabindex="-1" data-message="detailSummary"></summary>
         <p data-message="password_details"></p>
       </details>
-      <input id="password" type="password" required tabindex="1" data-stored="" />
+      <input id="password" type="password" required tabindex="1" />
     </div>
 
     <div class="fullfield">
-      <label for="storageFolder" data-message="storageFolder"> </label>
+      <label for="storageFolder" data-message="storageFolder"></label>
       <details>
         <summary tabindex="-1" data-message="detailSummary"></summary>
         <p data-message="storageFolder_details"></p>
       </details>
-      <input id="storageFolder" type="text" required tabindex="1" value="/Mail-attachments"
-        data-stored="/Mail-attachments" />
+      <input id="storageFolder" type="text" required tabindex="1" value="/Mail-attachments" />
     </div>
 
     <div class="fullfield">
       <span class="checkboxWithLabel">
-        <input id="useDlPassword" type="checkbox" tabindex="1" data-stored="" />
-        <label for="useDlPassword" data-message="useDlPassword"> </label>
+        <input id="useDlPassword" type="checkbox" tabindex="1" />
+        <label for="useDlPassword" data-message="useDlPassword"></label>
       </span>
       <details>
         <summary tabindex="-1" data-message="detailSummary"></summary>
         <p data-message="useDlPassword_details"></p>
       </details>
-      <input id="downloadPassword" class="subinput" type="text" disabled tabindex="1" data-stored="" />
+      <input id="downloadPassword" class="subinput" type="text" disabled tabindex="1" />
     </div>
+
     <div class="fullfield">
       <span class="checkboxWithLabel">
-        <input id="useExpiry" type="checkbox" tabindex="1" data-stored="" />
+        <input id="useExpiry" type="checkbox" tabindex="1" />
         <label for="useExpiry" data-message="expiryDaysBefore"></label>
-        <input class="sameline" type="number" id="expiryDays" min="1" step="1" value="7" data-stored="" tabindex="1"
-          disabled>
+        <input class="sameline" type="number" id="expiryDays" min="1" step="1" value="7" tabindex="1" disabled>
         <span for="expiryDays" data-message="expiryDaysAfter"> </span>
       </span>
       <details>

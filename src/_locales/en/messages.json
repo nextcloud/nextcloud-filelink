@@ -50,6 +50,9 @@
   "expiryDaysAfter": {
     "message": " days"
   },
+  "expiry_details": {
+    "message": "The number of days the download will be available, including today."
+  },
   "freespace": {
     "message": "Free Space ($FREE$ of $FULL$)",
     "placeholders": {

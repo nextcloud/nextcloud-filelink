@@ -40,9 +40,14 @@ browser.cloudFile.onFileUpload.addListener(async (account, { id, name, data }) =
 });
 
 browser.cloudFile.onFileUploadAbort.addListener(
-    // So far we don't need a configured connection for this, so just set the
-    // static method as handler
-    (account, id) => CloudConnection.abortUpload(id));
+    (account, fileId) => {
+        /* global allAbortControllers */
+        // defined in davuploader.js
+        const abortController = allAbortControllers.get(fileId);
+        if (abortController) {
+            abortController.abort();
+        }
+    });
 
 /** Don't delete any files because we want to reuse uploads. Just ignore the
  * event by adding an empty listener because Thunderbird will show error

@@ -81,9 +81,9 @@ details summary {
     display: inline-block;
 }
 
-/* TODO Set correct width */
 .sameline{
-    width: 4em;
+    max-width: 4em;
+    text-align: right;
 }
 
 button {

@@ -19,7 +19,6 @@ COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
 IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. */
 
-/* global allAbortControllers  */
 /* global DavUploader  */
 /* global encodepath  */
 /* global daysFromTodayIso */
@@ -41,107 +40,47 @@ const davUrlDefault = "/remote.php/dav/files/";
  * (API and DAV)
  */
 class CloudConnection {
-    //#region Constructors and property setup
+    //#region Constructors, load & store
     /**
      *
      * @param {*} accountId Whatever Thunderbird uses as an account identifier
-     * @param {*} [settings] An object containing all settings
      */
-    constructor(accountId, settings) {
+    constructor(accountId) {
         this._accountId = accountId;
-        this._complete = false;
-
-        if (settings) {
-            this._init(settings);
-        }
-    }
-
-    /**
-    * Internal function to load properties with values
-    *
-    * @param {*} settings An object containing settings for all properties
-    */
-    _init(settings) {
-        this._complete = true;
-
-        /* Copy all account data to fields */
-        this._serverurl = settings.serverUrl;
-        this._complete = this._complete && Boolean(this._serverurl);
-
-        this._username = settings.username;
-        this._complete = this._complete && Boolean(this._username);
-
-        this._password = settings.password;
-        this._complete = this._complete && Boolean(this._password);
-
-        this._storageFolder = settings.storageFolder;
-        this._complete = this._complete && Boolean(this._storageFolder);
-
-        this._useDlPassword = settings.useDlPassword;
-        this._downloadPassword = settings.downloadPassword;
-        if (this._useDlPassword) {
-            this._complete = this._complete && Boolean(this._downloadPassword);
-        }
-
-        this._useExpiry = settings.useExpiry;
-        this._expiryDays = settings.expiryDays;
-        if (this._useExpiry) {
-            this._complete = this._complete && Boolean(this._expiryDays);
-        }
-
-        let auth = "Basic " + btoa(this._username + ':' + this._password);
-
-        this._davHeaders = {
-            "Authorization": auth,
-            "User-Agent": "Filelink for *cloud",
-            "Content-Type": "application/octet-stream",
-        };
-
         this._apiHeaders = {
             "OCS-APIREQUEST": "true",
-            "Authorization": auth,
             "User-Agent": "Filelink for *cloud",
         };
+        this._davUrl = null;
     }
-    //#endregion
 
-    //#region Account data storage
     /**
      * Store the current values of all properties in the local browser storage
      */
     async store() {
-        browser.storage.local.set({
-            [this._accountId]:
-            {
-                serverUrl: this._serverurl,
-                username: this._username,
-                password: this._password,
-                storageFolder: this._storageFolder,
-                useDlPassword: this._useDlPassword,
-                downloadPassword: this._downloadPassword,
-                useExpiry: this._useExpiry,
-                expiryDays: this._expiryDays,
-            },
-        });
+        browser.storage.local.set({ [this._accountId]: this, });
     }
 
     /**
     * Load account state from configuration storage
     */
     async load() {
-        this._complete = false;
-        let accountInfo = await browser.storage.local.get(this._accountId);
-        if (accountInfo && this._accountId in accountInfo) {
-            this._init(accountInfo[this._accountId]);
+        const id = this._accountId;
+        const accountInfo = await browser.storage.local.get(id);
+        for (const key in accountInfo[id]) {
+            this[key] = accountInfo[id][key];
         }
+        // This isn't strictly necessary for new account since store() does it,
+        // but accounts configured with an older version of the Add On don't
+        // contain the headers
+        return this;
     }
-
     //#endregion
 
     //#region Event Handlers
     /**
      * Upload a single file
-     * 
+     *
      * @param {number} fileId The id Thunderbird uses to reference the upload
      * @param {string} fileName w/o path
      *      @param {File} fileObject the local file as a File object
@@ -155,12 +94,12 @@ class CloudConnection {
                 this._davUrl = "/" + data.capabilities.core["webdav-root"];
             } else {
                 // Use default from docs instead
-                this._davUrl = davUrlDefault + this._username;
+                this._davUrl = davUrlDefault + this.username;
             }
         }
 
         const uploader = new DavUploader(
-            this._serverurl, this._username, this._password, this._davUrl, this._storageFolder);
+            this.serverUrl, this.username, this.password, this._davUrl, this.storageFolder);
         const response = await uploader.uploadFile(fileId, fileName, fileObject);
 
         if (response.aborted) {
@@ -170,18 +109,6 @@ class CloudConnection {
             return { url: (await this._getShareLink(fileName)) + "/download", aborted: false, };
         }
         throw new Error("Upload failed.");
-    }
-
-    /**
-     * Abort a running upload
-     *
-     * @param {number} fileId Thunderbird's upload reference number
-     */
-    static abortUpload(fileId) {
-        const abortController = allAbortControllers.get(fileId);
-        if (abortController) {
-            abortController.abort();
-        }
     }
 
     /**
@@ -198,7 +125,7 @@ class CloudConnection {
      * Thunderbirds cloudFileAccount
      */
     async updateFreeSpaceInfo() {
-        this._doApiCall(apiUrlUserInfo + this._username)
+        this._doApiCall(apiUrlUserInfo + this.username)
             .then(data => {
                 if (data && data.quota) {
                     browser.cloudFile.updateAccount(this._accountId,
@@ -215,7 +142,7 @@ class CloudConnection {
      * according to actual state
      */
     async updateConfigured() {
-        browser.cloudFile.updateAccount(this._accountId, { configured: this._complete, });
+        browser.cloudFile.updateAccount(this._accountId, { configured: this._isComplete(), });
     }
 
     /**
@@ -227,17 +154,29 @@ class CloudConnection {
             const data = await this._doApiCall(apiUrlGetApppassword);
 
             if (data && data.apppassword) {
-                this._password = data.apppassword;
+                this.password = data.apppassword;
             }
         } catch (error) {
             // Ignore any errors because we can still use the password from the
             // form            
         }
-        return this._password;
+        return this.password;
     }
     //#endregion
 
     //#region Internal helpers
+    /**
+     * Check if all necessary data is present
+     */
+    _isComplete() {
+        return Boolean(this.serverUrl) &&
+            Boolean(this.username) &&
+            Boolean(this.password) &&
+            Boolean(this.storageFolder) &&
+            (this.useDlPassword ? Boolean(this.downloadPassword) : true) &&
+            (this.useExpiry ? Boolean(this.expiryDays) : true);
+    }
+
     /**
      * Get a share link for the file, reusing an existing one with the same
      * parameters
@@ -246,35 +185,36 @@ class CloudConnection {
      */
     async _getShareLink(fileName) {
         let expireDate = "The Spanish Inquisition";
-        if (this._useExpiry) {
-            expireDate = daysFromTodayIso(this._expiryDays);
+        if (this.useExpiry) {
+            expireDate = daysFromTodayIso(this.expiryDays);
         }
 
         //  Check if the file is already shared ...
         let shareinfo = await this._doApiCall(apiUrlShares + "?path=" +
-            encodepath(this._storageFolder + "/" + fileName));
+            encodepath(this.storageFolder + "/" + fileName));
         let existingShare = shareinfo.find(share =>
             /// ... and if it's a public share ...
             (share.share_type === 3) &&
-            // ... with the same password (if any) ...
-            // CAUTION: Nextcloud has password===null, ownCloud has password===undefined if no password is set
-            (this._useDlPassword ? share.password === this._downloadPassword : !share.password) &&
+            // ... with the same password (if any) ... CAUTION: Nextcloud has
+            // password===null, ownCloud has password===undefined if no password
+            // is set
+            (this.useDlPassword ? share.password === this.downloadPassword : !share.password) &&
             // ... and the same expiration date
-            ((!this._useExpiry && share.expiration === null) ||
-                (share.expiration !== null && this._useExpiry && share.expiration.startsWith(expireDate))));
+            ((!this.useExpiry && share.expiration === null) ||
+                (share.expiration !== null && this.useExpiry && share.expiration.startsWith(expireDate))));
 
         if (existingShare && existingShare.url) {
             return existingShare.url;
         } else {
-            let shareFormData = "path=" + encodepath(this._storageFolder + "/" + fileName);
+            let shareFormData = "path=" + encodepath(this.storageFolder + "/" + fileName);
             shareFormData = "" + shareFormData + "&shareType=3"; // 3 = public share
 
-            if (this._useDlPassword) {
-                shareFormData += "&password=" + encodeURIComponent(this._downloadPassword);
+            if (this.useDlPassword) {
+                shareFormData += "&password=" + encodeURIComponent(this.downloadPassword);
             }
 
             // Nextcloud's docs don't mention this, but it works.
-            if (this._useExpiry) {
+            if (this.useExpiry) {
                 shareFormData += "&expireDate=" + expireDate;
             }
 
@@ -300,18 +240,26 @@ class CloudConnection {
      * @returns {*} A Promise that resolves to the data element of the response
      */
     async _doApiCall(suburl, method, additional_headers, body) {
-        if (!this._complete) {
+        if (!this._isComplete()) {
             throw new Error("Account not configured");
         }
 
-        let url = this._serverurl;
+        let url = this.serverUrl;
         url += apiUrlBase;
         url += suburl;
         url += (suburl.includes('?') ? '&' : '?') + "format=json";
 
+        let headers = {
+            ...this._apiHeaders,
+            "Authorization": "Basic " + btoa(this.username + ':' + this.password),
+        };
+        if (additional_headers) {
+            headers = { ...headers, ...additional_headers, };
+        }
+
         let fetchInfo = {
             method: method ? method : 'GET',
-            headers: additional_headers ? { ...this._apiHeaders, ...additional_headers, } : this._apiHeaders,
+            headers,
         };
         if (undefined !== body) {
             fetchInfo.body = body;

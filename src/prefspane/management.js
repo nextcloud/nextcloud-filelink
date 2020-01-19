@@ -22,6 +22,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. */
 /* global CloudConnection */
 
 const accountId = new URL(location.href).searchParams.get("accountId");
+const ncc = new CloudConnection(accountId);
+
 const accountForm = document.querySelector("#accountForm");
 const serverUrl = document.querySelector("#serverUrl");
 const username = document.querySelector("#username");
@@ -39,9 +41,10 @@ const resetButton = document.querySelector("#resetButton");
     setStoredData();
 
     // Add localized strings
-    for (const element of document.querySelectorAll("[data-message]")) {
-        element.innerHTML = browser.i18n.getMessage(element.dataset.message);
-    }
+    document.querySelectorAll("[data-message]")
+        .forEach(element => {
+            element.innerHTML = browser.i18n.getMessage(element.dataset.message);
+        });
 
     // Add text from other sources
     browser.cloudFile.getAccount(accountId).then(
@@ -66,39 +69,32 @@ const resetButton = document.querySelector("#resetButton");
         });
 
     // Make form active
-    for (const inp of document.querySelectorAll("input")) {
-        inp.oninput = activateButtons;
-    }
+    document.querySelectorAll("input")
+        .forEach(inp => {
+            inp.oninput = activateButtons;
+        });
 })();
 
 /**
  * Load stored account data into form
  */
 async function setStoredData() {
-    downloadPassword.disabled = true;
-    downloadPassword.required = false;
-    expiryDays.disabled = true;
-    expiryDays.required = false;
+    await ncc.load();
 
-    const accountInfo = await browser.storage.local.get(accountId);
-    if (accountId in accountInfo) {
-        for (const key in accountInfo[accountId]) {
-            const element = document.getElementById(key);
-            if (element && accountInfo[accountId].hasOwnProperty(key)) {
-                element.value = accountInfo[accountId][key];
-                element.dataset.stored = accountInfo[accountId][key];
+    document.querySelectorAll("input")
+        .forEach(inp => {
+            if (inp.type === "checkbox") {
+                inp.checked = Boolean(ncc[inp.id]);
+            } else if (ncc[inp.id]) {
+                inp.value = ncc[inp.id];
             }
-        }
-        useDlPassword.checked = accountInfo[accountId].useDlPassword;
-        useDlPassword.dataset.stored = accountInfo[accountId].useDlPassword;
-        downloadPassword.disabled = !useDlPassword.checked;
-        downloadPassword.required = useDlPassword.checked;
+        });
 
-        useExpiry.checked = accountInfo[accountId].useExpiry;
-        useExpiry.dataset.stored = accountInfo[accountId].useExpiry;
-        expiryDays.disabled = !useExpiry.checked;
-        expiryDays.required = useExpiry.checked;
-    }
+    downloadPassword.disabled = !useDlPassword.checked;
+    downloadPassword.required = useDlPassword.checked;
+
+    expiryDays.disabled = !useExpiry.checked;
+    expiryDays.required = useExpiry.checked;
 }
 
 /** 
@@ -118,7 +114,6 @@ function linkDisabledToCheckbox(element, checkbox) {
     checkbox.addEventListener("click", async () => {
         element.disabled = !checkbox.checked;
         element.required = !element.disabled;
-        // activateButtons();
     });
 }
 
@@ -139,49 +134,49 @@ resetButton.onclick = async () => {
 
 /** Handler for Save button */
 saveButton.onclick = async () => {
+    // deactivate the form while handling it
     const provider_management = document.querySelector("#provider-management");
     provider_management.classList.add('busy');
     saveButton.disabled = resetButton.disabled = true;
     let states = {};
-    for (let element of document.querySelectorAll("input")) {
-        states[element.id] = element.disabled;
-        element.disabled = true;
-    }
+    document.querySelectorAll("input")
+        .forEach(element => {
+            states[element.id] = element.disabled;
+            element.disabled = true;
+        });
 
     // Sanitize input
-    for (const element of document.querySelectorAll("input")) {
-        element.value = element.value.trim();
-    }
+    document.querySelectorAll("input")
+        .forEach(element => {
+            element.value = element.value.trim();
+        });
     serverUrl.value = serverUrl.value.replace(/\/+$/, "");
 
     storageFolder.value = "/" + storageFolder.value.split('/').filter(e => "" !== e).join('/');
 
+    // If user typed new password, username or URL the token is likely not valid any more
+    const needsNewToken = password.value !== ncc.password ||
+        username.value !== ncc.username ||
+        serverUrl.value !== ncc.serverUrl;
+
     // Copy data into a connection object
-    const ncc = new CloudConnection(accountId,
-        {
-            serverUrl: serverUrl.value,
-            username: username.value,
-            password: password.value,
-            storageFolder: storageFolder.value,
-            useDlPassword: useDlPassword.checked,
-            downloadPassword: downloadPassword.value,
-            useExpiry: useExpiry.checked,
-            expiryDays: expiryDays.value,
+    document.querySelectorAll("input")
+        .forEach(inp => {
+            if (inp.type === "checkbox") {
+                ncc[inp.id] = inp.checked;
+            } else {
+                ncc[inp.id] = inp.value;
+            }
         });
 
-    // If user typed new password, username or URL try to convert it into app password
-    if (password.value !== password.dataset.stored ||
-        username.value !== username.dataset.stored ||
-        serverUrl.value !== serverUrl.dataset.stored) {
+    // Try to convert the password into App Token if necessary
+    if (needsNewToken) {
         password.value = await ncc.convertToApppassword();
     }
 
-    // Store account data
-    ncc.store();
-
-    browser.cloudFile.updateAccount(accountId, {
-        configured: true,
-    });
+    // Store account data and update configured state
+    ncc.store()
+        .then(ncc.updateConfigured());
 
     // Re-activate form
     for (const elementId in states) {

@@ -1,0 +1,36 @@
+{
+  "manifest_version": 2,
+  "applications": {
+    "gecko": {
+      "id": "owncloud@viguierjust.com",
+      "strict_min_version": "68.0"
+    }
+  },
+  "name": "__MSG_extensionName__",
+  "description": "__MSG_extensionDescription__",
+  "homepage_url": "https://github.com/nextcloud/nextcloud-filelink",
+  "author": "Thomas Spellman",
+  "developer": {
+    "name": "Thomas Spellman",
+    "url": "https://code.thosmos.com"
+  },
+  "version": "2.0",
+  "default_locale": "en",
+  "icons": {
+    "128": "icon.png",
+    "64": "icon64.png"
+  },
+  "background": {
+    "scripts": [
+      "background.js"
+    ]
+  },
+  "permissions": [
+    "<all_urls>",
+    "storage"
+  ],
+  "cloud_file": {
+    "name": "__MSG_serviceName__",
+    "management_url": "management.html"
+  }
+}

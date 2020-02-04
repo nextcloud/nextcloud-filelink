@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <title></title>
+  <script src="management.js" type="application/javascript" defer=""></script>
+  <style type="text/css">
+    :root {
+      font: message-box;
+      color: #0c0c0d;
+    }
+    body {
+      font-size: 1.1em;
+    }
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+    h1 {
+      font-weight: 600;
+      font-size: 1.25em;
+      margin-top: 0;
+      margin-bottom: 0.5em;
+    }
+    h2 {
+      font-weight: 600;
+      font-size: 1.1em;
+      margin: 0.5em 0;
+    }
+    p {
+      margin: 0.5em 0;
+    }
+    input {
+      width: 100%;
+      box-sizing: border-box;
+    }
+    button {
+      -moz-appearance: none;
+      min-height: 32px;
+      color: inherit !important;
+      border: 1px solid transparent;
+      border-radius: 2px;
+      background-color: rgba(12, 12, 13, 0.1);
+      font-weight: 400;
+      padding: 0 8px;
+      text-decoration: none;
+      font-size: 1em;
+    }
+    button:hover {
+      background-color: rgba(12, 12, 13, 0.2);
+    }
+    button:hover:active {
+      background-color: rgba(12, 12, 13, 0.3);
+    }
+
+    #provider-space-visuals {
+      width: 201px;
+      height: 201px;
+      float: right;
+    }
+    #provider-space {
+      text-align: right;
+      margin-right: 241px;
+      margin-top: 50px;
+      height: 100px;
+    }
+    #provider-space label {
+      margin-inline-end: 0.5ch;
+      vertical-align: middle;
+    }
+
+    #provider-space span {
+      vertical-align: middle;
+    }
+
+    .space-swatch {
+      display: inline-block;
+      width: 1em;
+      height: 1em;
+      border: 1px solid rgba(0,0,0,0.5);
+      border-radius: 2px;
+      margin-inline-start: 0.5ch;
+      box-sizing: border-box;
+    }
+  </style>
+</head>
+<body>
+  
+  <form id="notAuthed" >
+    <h1 data-message="serviceName"></h1>
+    <ul>
+      <li>
+        <label>
+          <h2 data-message="serverURLLabel"></h2>
+          <p data-message="serverURLDesc"></p>
+          <input type="url" name="webdavUrl" required="true" placeholder="https://my.owncloud.server/remote.php/dav/files/username/" />
+        </label>
+      </li>
+      <li>
+        <label>
+          <h2 data-message="usernameLabel"></h2>
+          <p data-message="usernameDesc"></p>
+          <input type="text" name="username" required="true" placeholder="username" />
+        </label>
+      </li>
+      <li>
+        <label>
+          <h2 data-message="tokenLabel"></h2>
+          <p data-message="tokenDesc"></p>
+          <input type="password" name="token" required="true" placeholder="xxxxx" />
+        </label>
+      </li>
+      <li>
+        <label>
+          <h2 data-message="pathLabel"></h2>
+          <p data-message="pathDesc"></p>
+          <input type="text" name="path" placeholder="/MailAttachments/" value="/MailAttachments/" />
+        </label>
+      </li>
+    </ul>
+    <div style="text-align: right"><button id="clickMe" type="button">Save</button></div>
+  </form>
+  
+  <div id="authed" hidden="true">
+    <div id="provider-loading" align="center">
+      <img src="loading.png" />
+    </div>
+    <div id="provider-spacebox" hidden="true">
+      <div id="provider-space-visuals">
+        <svg width="201" height="201">
+          <path fill="#aec7e8" d="M 100,0 A 100,100 0 0 0 0,100 100,100 0 0 0 100,200 100,100 0 0 0 200,100 100,100 0 0 0 100,0 Z M 100,60 A 40,40 0 0 1 140,100 40,40 0 0 1 100,140 40,40 0 0 1 60,100 40,40 0 0 1 100,60 z" fill="#c87137"/>
+          <path id="thisone" fill="#1f77b4" d="M 100,0 A 100,100 0 0 1 200,100 L 140,100 A 40,40 0 0 0 100,60 Z"/>
+          <text x="100" y="100" text-anchor="middle" dominant-baseline="middle"/>
+        </svg>
+      </div>
+      <div id="provider-space">
+        <div>
+          <label data-message="space_used"></label>
+          <span id="file-space-used"></span>
+          <span id="file-space-used-swatch" class="space-swatch" style="background-color: #1f77b4"></span>
+        </div>
+        <div>
+          <label data-message="space_unused"></label>
+          <span id="remaining-file-space"></span>
+          <span id="remaining-file-space-swatch" class="space-swatch" style="background-color: #aec7e8"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

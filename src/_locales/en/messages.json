@@ -1,0 +1,38 @@
+{
+  "extensionName": {
+    "message": "Nextcloud for Filelink",
+    "description": "Name of the extension"
+  },
+  "extensionDescription": {
+    "message": "Nextcloud provider for Thunderbird Filelink",
+    "description": "Description of the extension"
+  },
+  "serviceName": {
+    "message": "Nextcloud",
+    "description": "Name of the service"
+  },
+  "serverURLLabel": {
+    "message": "WebDAV URL"
+  },
+  "serverURLDesc": {
+    "message": "Your Personal WebDAV file path can be found under Settings in the lower left of the Files screen."
+  },
+  "usernameLabel": {
+    "message": "Username"
+  },
+  "usernameDesc": {
+    "message": "Your NextCloud username"
+  },
+  "tokenLabel": {
+    "message": "App Token / Password"
+  },
+  "tokenDesc": {
+    "message": "An app token (preferrable) or password. Generate an app token via User -> Settings -> Security -> App Token.  WARNING: this token is stored insecurely.  NOTE: this may require the OAuth2 plugin on the server."
+  },
+  "pathLabel": {
+    "message": "Storage Path"
+  },
+  "pathDesc": {
+    "message": "The path where the files are stored in OwnCloud (it must already exist on the server)"
+  }
+}

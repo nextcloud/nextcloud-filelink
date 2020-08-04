@@ -51,7 +51,7 @@ Once setup is complete, Thunderbird will always ask you if you want to upload bi
 ## Requirements
 
 * Nextcloud: 11.0.2 and newer
-* Thunderbird: 17.0 and newer
+* Thunderbird: 17.0 and <= 67. For Thunderbird 68+, use https://gitlab.com/joendres/filelink-nextcloud instead (see https://github.com/nextcloud/nextcloud-filelink/issues/80).
 
 ## Known issues
 

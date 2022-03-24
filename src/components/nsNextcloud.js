@@ -385,7 +385,7 @@ Nextcloud.prototype = {
 		// Use the service name in the prompt text
     let userPos = this._fullUrl.indexOf("//") + 2;
     let userNamePart = encodeURIComponent(this._userName) + '@';
-    let serverUrl = this._fullUrl.substr(0, userPos) + userNamePart + this._fullUrl.substr(userPos);
+    let serverUrl = this._fullUrl.slice(0, userPos) + userNamePart + this._fullUrl.slice(userPos);
 		let messengerBundle = Services.strings.createBundle(
 			"chrome://messenger/locale/messenger.properties");
 		let promptString = messengerBundle.formatStringFromName("passwordPrompt",
